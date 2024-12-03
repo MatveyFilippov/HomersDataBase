@@ -1,12 +1,12 @@
-package homer.database;
+package homer.database.backend;
 
-import homer.database.engine.FileProcessor;
-import homer.database.engine.columns.Column;
-import homer.database.engine.columns.UniqueColumn;
-import homer.database.engine.columns.helpers.RecordUniqueID;
-import homer.database.engine.datatypes.helpers.DataType;
-import homer.database.engine.columns.helpers.ColumnsProcessor;
-import homer.database.engine.datatypes.helpers.DataTypes;
+import homer.database.backend.engine.FileProcessor;
+import homer.database.backend.engine.columns.Column;
+import homer.database.backend.engine.columns.UniqueColumn;
+import homer.database.backend.engine.columns.helpers.RecordUniqueID;
+import homer.database.backend.engine.datatypes.helpers.DataType;
+import homer.database.backend.engine.columns.helpers.ColumnsProcessor;
+import homer.database.backend.engine.datatypes.helpers.DataTypes;
 
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
@@ -18,6 +18,14 @@ public class DataBase {
 
     public static void setPathToDataBase(String rootDataBaseDirPath, String tableName) {
         FileProcessor.pathToDataBaseRootDir = FileProcessor.join(rootDataBaseDirPath, tableName);
+    }
+
+    public static void setPathToDataBase(String tableName) {
+        FileProcessor.pathToDataBaseRootDir = tableName;
+    }
+
+    public static void setPathToDataBase(String ... pathsToTable) {
+        FileProcessor.pathToDataBaseRootDir = FileProcessor.join(pathsToTable);
     }
 
     public static void deleteTable() {

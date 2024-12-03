@@ -1,7 +1,7 @@
-package homer.database.engine.columns;
+package homer.database.backend.engine.columns;
 
-import homer.database.engine.datatypes.helpers.DataType;
-import homer.database.engine.datatypes.helpers.DataTypes;
+import homer.database.backend.engine.datatypes.helpers.DataType;
+import homer.database.backend.engine.datatypes.helpers.DataTypes;
 import java.io.IOException;
 
 public class SimpleColumn<DT extends DataType> extends Column<DT> {

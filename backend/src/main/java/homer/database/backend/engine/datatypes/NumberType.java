@@ -1,9 +1,13 @@
-package homer.database.engine.datatypes;
+package homer.database.backend.engine.datatypes;
 
-import homer.database.engine.datatypes.helpers.DataType;
+import homer.database.backend.engine.datatypes.helpers.DataType;
 
 public class NumberType extends DataType {
     public NumberType(Double value) {
+        super(value.toString());
+    }
+
+    public NumberType(Integer value) {
         super(value.toString());
     }
 
