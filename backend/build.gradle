@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group 'homer.database'
@@ -9,6 +10,30 @@ repositories {
     mavenCentral()
 }
 
+sourceCompatibility = '9'
+targetCompatibility = '9'
+
 dependencies {
     implementation 'com.google.guava:guava:33.3.1-jre'
+}
+
+jar {
+    archivesBaseName = 'HomersDataBase-backend'
+    manifest {
+        attributes(
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version
+        )
+    }
+}
+
+shadowJar {
+    archiveBaseName.set('HomersDataBase-backend')
+    archiveClassifier.set('WithDependencies')
+    manifest {
+        attributes(
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version
+        )
+    }
 }
