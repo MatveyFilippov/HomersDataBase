@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group 'homer.convertor'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+sourceCompatibility = '9'
+targetCompatibility = '9'
+
+dependencies {
+    implementation name: 'HomersDataBase-backend-1.0-WithDependencies'
+}
+
+jar {
+    archivesBaseName = 'HomersDataBase-convertor'
+    manifest {
+        attributes(
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version
+        )
+    }
+}
+
+shadowJar {
+    archiveBaseName.set('HomersDataBase-convertor')
+    archiveClassifier.set('WithDependencies')
+    manifest {
+        attributes(
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version
+        )
+    }
+}
