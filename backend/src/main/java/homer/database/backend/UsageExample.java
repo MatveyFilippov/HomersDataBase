@@ -8,7 +8,7 @@ import javax.naming.NameNotFoundException;
 import java.io.IOException;
 import java.security.KeyException;
 
-public class UsageExample {
+class UsageExample {
     public static void main(String[] args) throws IOException, NameNotFoundException, KeyException {
         DataBase.setPathToDataBase("DataBaseExample");
 
