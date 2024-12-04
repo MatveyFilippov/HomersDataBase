@@ -1,8 +1,11 @@
+import io.github.fvarrui.javapackager.gradle.PackageTask
+
 plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.13'
     id 'org.beryx.jlink' version '2.25.0'
+    id 'io.github.fvarrui.javapackager.plugin' version '1.7.6'
 }
 
 group 'homer.database'
@@ -55,4 +58,16 @@ jlink {
 
 jlinkZip {
     group = 'distribution'
+}
+
+task packageMyApp(type: PackageTask, dependsOn: build) {
+    // mandatory
+    mainClass = application.mainClass
+
+    // optional
+    bundleJre = true|false
+    generateInstaller = true|false
+    administratorRequired = true|false
+    platform = "auto"
+    additionalResources = [file('ImHere.txt')]
 }
