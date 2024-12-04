@@ -16,14 +16,6 @@ import java.util.List;
 
 public class DataBase {
 
-    public static void setPathToDataBase(String rootDataBaseDirPath, String tableName) {
-        FileProcessor.pathToDataBaseRootDir = FileProcessor.join(rootDataBaseDirPath, tableName);
-    }
-
-    public static void setPathToDataBase(String tableName) {
-        FileProcessor.pathToDataBaseRootDir = tableName;
-    }
-
     public static void setPathToDataBase(String ... pathsToTable) {
         FileProcessor.pathToDataBaseRootDir = FileProcessor.join(pathsToTable);
     }
