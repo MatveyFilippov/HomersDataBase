@@ -32,13 +32,13 @@ public abstract class Column<DT extends DataType> {
         if (!canBeNull && value.isNull()) {
             throw new NullPointerException("Value can't be null");
         }
-        try (HashDict values = new HashDict(valuesHashTableFile)){
+        try (HashDict values = new HashDict(valuesHashTableFile)) {
             values.put(recordUniqueID.toString(), value.toString());
         }
     }
 
     public DT readValue(RecordUniqueID recordUniqueID) throws IOException {
-        try (HashDict values = new HashDict(valuesHashTableFile)){
+        try (HashDict values = new HashDict(valuesHashTableFile)) {
             String value = values.get(recordUniqueID.toString(), null);
             return dataType.parseValue(value);
         }
@@ -49,7 +49,7 @@ public abstract class Column<DT extends DataType> {
         if (value == null) {
             return recordsUniqueID;
         }
-        try (HashDict values = new HashDict(valuesHashTableFile)){
+        try (HashDict values = new HashDict(valuesHashTableFile)) {
             List<String> keys = values.findKeysByValue(value.toString());
             for (String key : keys) {
                 recordsUniqueID.add(new RecordUniqueID(dataType.parseValue(key)));
@@ -59,7 +59,7 @@ public abstract class Column<DT extends DataType> {
     }
 
     public void deleteValue(RecordUniqueID recordUniqueID) throws IOException {
-        try (HashDict values = new HashDict(valuesHashTableFile)){
+        try (HashDict values = new HashDict(valuesHashTableFile)) {
             values.remove(recordUniqueID.toString());
         }
     }
