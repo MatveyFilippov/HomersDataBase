@@ -13,7 +13,7 @@ import java.util.List;
 public class UniqueColumn<DT extends DataType> extends Column<DT> {
     protected final FileProcessor idsHashTableFile;
 
-    public UniqueColumn(String columnName, DataTypes dataType) throws IOException {
+    public UniqueColumn(String columnName, DataTypes dataType) {
         super(columnName, false, dataType);
         idsHashTableFile = new FileProcessor(
                 "Ids",

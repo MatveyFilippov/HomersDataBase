@@ -15,7 +15,7 @@ public abstract class Column<DT extends DataType> {
     public final DataTypes dataType;
     protected final FileProcessor valuesHashTableFile;
 
-    public Column(String columnName, boolean canBeNull, DataTypes dataType) throws IOException {
+    public Column(String columnName, boolean canBeNull, DataTypes dataType) {
         valuesHashTableFile = new FileProcessor(
                 "Values",
                 FileProcessor.Constants.HDBC_FOLDER_NAME,
