@@ -14,13 +14,14 @@ public abstract class Column<DT extends DataType> {
     protected final boolean canBeNull;
     public final DataTypes dataType;
     protected final FileProcessor valuesHashTableFile;
+    protected final String pathToColumnDirFromDBRoot;
 
     public Column(String columnName, boolean canBeNull, DataTypes dataType) {
-        valuesHashTableFile = new FileProcessor(
-                "Values",
+        pathToColumnDirFromDBRoot = FileProcessor.join(
                 FileProcessor.Constants.HDBC_FOLDER_NAME,
                 columnName.replace(" ", "_")
         );
+        valuesHashTableFile = new FileProcessor("Values", pathToColumnDirFromDBRoot);
 
         this.columnName = columnName;
         this.canBeNull = canBeNull;
@@ -64,7 +65,7 @@ public abstract class Column<DT extends DataType> {
     }
 
     public void deleteColumn() {
-        valuesHashTableFile.deleteFile();
+        FileProcessor.deleteDir(FileProcessor.join(FileProcessor.pathToDataBaseRootDir, pathToColumnDirFromDBRoot));
     }
 
     @Override

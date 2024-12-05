@@ -15,11 +15,7 @@ public class UniqueColumn<DT extends DataType> extends Column<DT> {
 
     public UniqueColumn(String columnName, DataTypes dataType) {
         super(columnName, false, dataType);
-        idsHashTableFile = new FileProcessor(
-                "Ids",
-                FileProcessor.Constants.HDBC_FOLDER_NAME,
-                columnName.replace(" ", "_")
-        );
+        idsHashTableFile = new FileProcessor("Ids", pathToColumnDirFromDBRoot);
     }
 
     public List<DT> getAllValues() throws IOException {
@@ -55,18 +51,12 @@ public class UniqueColumn<DT extends DataType> extends Column<DT> {
         if (value == null) {
             return recordsUniqueID;
         }
-        try (HashDict ids = new HashDict(idsHashTableFile)){
+        try (HashDict ids = new HashDict(idsHashTableFile)) {
             String recordUniqueID = ids.get(value.toString(), null);
             if (recordUniqueID != null) {
                 recordsUniqueID.add(new RecordUniqueID(dataType.parseValue(recordUniqueID)));
             }
         }
         return recordsUniqueID;
-    }
-
-    @Override
-    public void deleteColumn() {
-        super.deleteColumn();
-        idsHashTableFile.deleteFile();
     }
 }
