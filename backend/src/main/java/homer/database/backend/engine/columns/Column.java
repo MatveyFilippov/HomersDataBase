@@ -29,8 +29,9 @@ public abstract class Column<DT extends DataType> {
     }
 
     public void writeValue(RecordUniqueID recordUniqueID, DT value) throws IOException {
-        if (value.isNull()) {
+        if (value == null) {
             if (canBeNull) {
+                deleteValue(recordUniqueID);
                 return;
             }
             throw new NullPointerException("Value can't be null");

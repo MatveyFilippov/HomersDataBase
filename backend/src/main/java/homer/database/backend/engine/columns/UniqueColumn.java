@@ -30,7 +30,7 @@ public class UniqueColumn<DT extends DataType> extends Column<DT> {
 
     @Override
     public void writeValue(RecordUniqueID recordUniqueID, DT value) throws IOException {
-        if (value.isNull()) {
+        if (value == null) {
             throw new NullPointerException("Value can't be null");
         }
         try (HashDict ids = new HashDict(idsHashTableFile)) {
