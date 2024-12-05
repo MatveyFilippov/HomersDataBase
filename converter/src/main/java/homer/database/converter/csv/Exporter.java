@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Exporter {
-    public static final String CSV_LINE_SEPARATOR = ", ";
+    public static final String CSV_LINE_SEPARATOR = ",";
 
     private static String appendExtensionToCsvFilePathIfNotExists(String filePath) {
         if (!filePath.endsWith(".CSV")) {
@@ -35,12 +35,12 @@ public class Exporter {
     }
 
     public static void toCSV(String dirPathToPutCsvExportFile) throws NameNotFoundException, IOException, KeyException {
-        List<String> linesTemp = new ArrayList<>();
-        linesTemp.add(
+        List<String> lines = new ArrayList<>();
+        lines.add(
                 String.join(CSV_LINE_SEPARATOR, DataBaseReader.getHeaders())
         );
-        linesTemp.addAll(DataBaseReader.getLines(CSV_LINE_SEPARATOR));
-        csvWriter(getPathToCsvExportFile(dirPathToPutCsvExportFile), linesTemp.toArray(new String[0]));
+        lines.addAll(DataBaseReader.getLines(CSV_LINE_SEPARATOR));
+        csvWriter(getPathToCsvExportFile(dirPathToPutCsvExportFile), lines.toArray(new String[0]));
     }
 
     public static void toCSV() throws NameNotFoundException, IOException, KeyException {
