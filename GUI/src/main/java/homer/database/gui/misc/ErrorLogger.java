@@ -54,7 +54,7 @@ public class ErrorLogger {
     }
 
     private static void showErrorInApp(String errorCause) {
-        ErrorAlert.showAlert(errorCause, "Произошла неожиданная ошибка.");
+        ErrorAlert.showAlert("Произошла неожиданная ошибка.", errorCause);
     }
 
     private static void printErrorInTerminal(String errorThreadName, String errorStackTrace) {
