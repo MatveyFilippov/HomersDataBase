@@ -80,21 +80,18 @@ public class FileProcessor {
         }
     }
 
-    public static void deleteRootDir() {
-        cleanRootDir();
-        if (pathToDataBaseRootDir != null) {
-            deleteFileOrDir(new File(pathToDataBaseRootDir));
+    public static void deleteDir(String dirPath) {
+        if (dirPath != null) {
+            cleanDir(dirPath);
+            deleteFileOrDir(new File(dirPath));
         }
     }
 
-    public static void cleanRootDir() {
-        if (pathToDataBaseRootDir == null) {
-            return;
+    public static void cleanDir(String dirPath) {
+        if (dirPath != null) {
+            cleanDir(new File(dirPath));
         }
-        File dbRootDir = new File(pathToDataBaseRootDir);
-        cleanDir(dbRootDir);
     }
-
 
     public static String join(String ... members) {
         String first = members[0];

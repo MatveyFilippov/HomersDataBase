@@ -21,12 +21,17 @@ public class DataBase {
     }
 
     public static void deleteTable() {
-        FileProcessor.deleteRootDir();
+        FileProcessor.deleteDir(FileProcessor.pathToDataBaseRootDir);
         FileProcessor.pathToDataBaseRootDir = null;
     }
 
     public static void cleanTable() {
-        FileProcessor.cleanRootDir();
+        FileProcessor.cleanDir(FileProcessor.join(
+                FileProcessor.pathToDataBaseRootDir, FileProcessor.Constants.HDBC_FOLDER_NAME
+        ));
+        FileProcessor.cleanDir(FileProcessor.join(
+                FileProcessor.pathToDataBaseRootDir, FileProcessor.Constants.HDBT_FOLDER_NAME
+        ));
     }
 
     public static void createTable(String primaryColumnName, DataTypes primaryColumnDataType) throws IOException {
