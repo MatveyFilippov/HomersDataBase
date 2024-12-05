@@ -59,6 +59,10 @@ public class DataBase {
         return columnNames;
     }
 
+    private static boolean isPrimaryColumn(String columnName) throws NameNotFoundException, IOException, KeyException {
+        return columnName.equals(getPrimaryColumnName());
+    }
+
     public static String getColumnHeader(String columnName) throws IOException, NameNotFoundException {
         Column<? extends DataType> column = ColumnsProcessor.getColumn(columnName);
         return column.toString();
@@ -111,7 +115,7 @@ public class DataBase {
     }
 
     public static void deleteValue(String columnName, RecordUniqueID recordUniqueID) throws NameNotFoundException, IOException, KeyException {
-        if (columnName.equals(ColumnsProcessor.getPrimaryColumn().columnName)) {
+        if (isPrimaryColumn(columnName)) {
             deleteLine(recordUniqueID);
         } else {
             deleteValueWithoutCheckingToPrimary(columnName, recordUniqueID);
@@ -119,7 +123,7 @@ public class DataBase {
     }
 
     public static <DT extends DataType> void deleteValues(String columnName, DT value) throws NameNotFoundException, IOException, KeyException {
-        if (columnName.equals(ColumnsProcessor.getPrimaryColumn().columnName)) {
+        if (isPrimaryColumn(columnName)) {
             deleteLine(findValues(columnName, value).get(0));
         } else {
             for (RecordUniqueID recordUniqueID : findValues(columnName, value)) {
