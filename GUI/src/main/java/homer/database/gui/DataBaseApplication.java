@@ -12,8 +12,8 @@ public class DataBaseApplication extends Application {
     public void start(Stage stage) throws IOException {
         Thread.setDefaultUncaughtExceptionHandler(ErrorLogger::appErrorHandler);
 
-        FXMLLoader fxmlLoader = new FXMLLoader(DataBaseApplication.class.getResource("HomersDataBaseApp.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+        FXMLLoader fxmlLoader = new FXMLLoader(DataBaseApplication.class.getResource("HomersDataBaseAppView.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 1024, 720);
         stage.setTitle("HomersDataBase");
         stage.setScene(scene);
         stage.show();
