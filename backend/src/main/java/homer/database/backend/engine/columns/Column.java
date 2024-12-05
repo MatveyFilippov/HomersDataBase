@@ -29,7 +29,10 @@ public abstract class Column<DT extends DataType> {
     }
 
     public void writeValue(RecordUniqueID recordUniqueID, DT value) throws IOException {
-        if (!canBeNull && value.isNull()) {
+        if (value.isNull()) {
+            if (canBeNull) {
+                return;
+            }
             throw new NullPointerException("Value can't be null");
         }
         try (HashDict values = new HashDict(valuesHashTableFile)) {
