@@ -1,12 +1,12 @@
 package homer.database.gui;
 
 import homer.database.backend.DataBase;
+import homer.database.gui.table.TableProcessor;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import javafx.collections.ObservableList;
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
-import java.security.KeyException;
 
 public class AppController {
     @FXML
