@@ -13,6 +13,9 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 ext {
@@ -42,6 +45,9 @@ dependencies {
     implementation 'org.openjfx:javafx-controls:22.0.1'
     implementation 'org.openjfx:javafx-fxml:22.0.1'
     implementation 'org.openjfx:javafx-graphics:22.0.1'
+
+    implementation name: 'HomersDataBase-backend-1.1-WithDependencies'
+    implementation name: 'HomersDataBase-convertor-1.0-WithDependencies'
 }
 
 test {
