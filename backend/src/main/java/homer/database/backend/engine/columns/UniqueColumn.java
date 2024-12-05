@@ -68,4 +68,12 @@ public class UniqueColumn<DT extends DataType> extends Column<DT> {
         }
         super.deleteValue(recordUniqueID);
     }
+
+    @Override
+    public void cleanColumn() throws IOException {
+        super.cleanColumn();
+        try (HashDict ids = new HashDict(idsHashTableFile)) {
+            ids.cleanDict();
+        }
+    }
 }

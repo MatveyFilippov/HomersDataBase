@@ -30,6 +30,17 @@ public class ColumnsProcessor {
         ColumnParamsHashTable.registerNewColumn(name, columnClass.toString(), isUnique, isNullPossible);
     }
 
+    public static void cleanColumn(String name) throws IOException {
+        try {
+            ColumnParamsHashTable columnParamsToClean = new ColumnParamsHashTable(name);
+            if (columnParamsToClean.isPrimaryColumn()) {
+                throw new IOException("You can't clean primary column");
+            }
+            Column<? extends DataType> columnToClean = exportColumnParamsToColumn(columnParamsToClean);
+            columnToClean.cleanColumn();
+        } catch (NameNotFoundException ignored) {}
+    }
+
     public static void deleteColumn(String name) throws IOException {
         try {
             ColumnParamsHashTable columnParamsToDel = new ColumnParamsHashTable(name);

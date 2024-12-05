@@ -64,6 +64,12 @@ public abstract class Column<DT extends DataType> {
         }
     }
 
+    public void cleanColumn() throws IOException {
+        try (HashDict values = new HashDict(valuesHashTableFile)) {
+            values.cleanDict();
+        }
+    }
+
     public void deleteColumn() {
         FileProcessor.deleteDir(FileProcessor.join(FileProcessor.pathToDataBaseRootDir, pathToColumnDirFromDBRoot));
     }

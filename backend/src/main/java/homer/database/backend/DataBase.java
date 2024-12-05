@@ -42,6 +42,10 @@ public class DataBase {
         ColumnsProcessor.newColumn(columnName, columnDataType, isUnique, isNullPossible);
     }
 
+    public static void cleanColumn(String columnName) throws IOException {
+        ColumnsProcessor.cleanColumn(columnName);
+    }
+
     public static void deleteColumn(String columnName) throws IOException {
         ColumnsProcessor.deleteColumn(columnName);
     }
