@@ -11,6 +11,7 @@ import java.security.KeyException;
 class UsageExample {
     public static void main(String[] args) throws IOException, NameNotFoundException, KeyException {
         DataBase.setPathToDataBase("DataBaseExample");
+        DataBase.cleanTable();
 
         DataBase.createTable("ID", DataTypes.NUMBER);
         DataBase.createColumn("Name", DataTypes.STRING, false, true);
