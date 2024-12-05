@@ -1,18 +1,20 @@
 package homer.database.gui;
 
+import homer.database.gui.misc.ErrorLogger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 
 public class DataBaseApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(DataBaseApplication.class.getResource("hello-view.fxml"));
+        Thread.setDefaultUncaughtExceptionHandler(ErrorLogger::appErrorHandler);
+
+        FXMLLoader fxmlLoader = new FXMLLoader(DataBaseApplication.class.getResource("HomersDataBaseApp.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
+        stage.setTitle("HomersDataBase");
         stage.setScene(scene);
         stage.show();
     }
