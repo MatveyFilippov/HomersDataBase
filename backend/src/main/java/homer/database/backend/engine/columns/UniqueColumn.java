@@ -59,4 +59,13 @@ public class UniqueColumn<DT extends DataType> extends Column<DT> {
         }
         return recordsUniqueID;
     }
+
+    @Override
+    public void deleteValue(RecordUniqueID recordUniqueID) throws IOException {
+        try (HashDict ids = new HashDict(idsHashTableFile)) {
+            DT value = super.readValue(recordUniqueID);
+            ids.remove(value.toString());
+        }
+        super.deleteValue(recordUniqueID);
+    }
 }

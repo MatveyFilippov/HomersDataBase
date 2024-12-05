@@ -105,20 +105,32 @@ public class DataBase {
         return column.getRecordsUniqueID(value);
     }
 
-    public static void deleteValue(String columnName, RecordUniqueID recordUniqueID) throws NameNotFoundException, IOException {
+    private static void deleteValueWithoutCheckingToPrimary(String columnName, RecordUniqueID recordUniqueID) throws NameNotFoundException, IOException {
         Column<? extends DataType> column = ColumnsProcessor.getColumn(columnName);
         column.deleteValue(recordUniqueID);
     }
 
-    public static <DT extends DataType> void deleteValues(String columnName, DT value) throws NameNotFoundException, IOException {
-        for (RecordUniqueID recordUniqueID : findValues(columnName, value)) {
-            deleteValue(columnName, recordUniqueID);
+    public static void deleteValue(String columnName, RecordUniqueID recordUniqueID) throws NameNotFoundException, IOException, KeyException {
+        if (columnName.equals(ColumnsProcessor.getPrimaryColumn().columnName)) {
+            deleteLine(recordUniqueID);
+        } else {
+            deleteValueWithoutCheckingToPrimary(columnName, recordUniqueID);
+        }
+    }
+
+    public static <DT extends DataType> void deleteValues(String columnName, DT value) throws NameNotFoundException, IOException, KeyException {
+        if (columnName.equals(ColumnsProcessor.getPrimaryColumn().columnName)) {
+            deleteLine(findValues(columnName, value).get(0));
+        } else {
+            for (RecordUniqueID recordUniqueID : findValues(columnName, value)) {
+                deleteValueWithoutCheckingToPrimary(columnName, recordUniqueID);
+            }
         }
     }
 
     public static void deleteLine(RecordUniqueID recordUniqueID) throws IOException, NameNotFoundException {
         for (Column<? extends DataType> column : ColumnsProcessor.getColumns()) {
-            deleteValue(column.columnName, recordUniqueID);
+            deleteValueWithoutCheckingToPrimary(column.columnName, recordUniqueID);
         }
     }
 }
