@@ -10,17 +10,20 @@ import java.nio.file.Paths;
 
 public class FileProcessor {
     public static class Constants {
-        public static final String HASH_DICT_FILE_EXTENSION = ".HHD";  // HomerHashTable
+        public static final String HASH_DICT_FILE_EXTENSION = ".HHD";  // HomerHashDictionary
         public static final String HDBC_FOLDER_NAME = "HomerDataBaseColumns";
         public static final String HDBT_FOLDER_NAME = "HomerDataBaseTable";
     }
 
-    public static String pathToDataBaseRootDir = "";
+    public static String pathToDataBaseRootDir;
 
     private Path filePath;
 
     public FileProcessor(String fileName, String ... parentFoldersFromRootDit) {
-        Path tempFilePath = Paths.get(String.valueOf(pathToDataBaseRootDir));
+        if (pathToDataBaseRootDir == null) {
+            throw new RuntimeException("Path to DataBase root dir must be set");
+        }
+        Path tempFilePath = Paths.get(pathToDataBaseRootDir);
         for (String nextFolder : parentFoldersFromRootDit) {
             tempFilePath = Paths.get(String.valueOf(tempFilePath), nextFolder);
         }
@@ -34,7 +37,7 @@ public class FileProcessor {
     }
 
     public String getPathToFile() {
-        return filePath.toString();
+        return filePath.toAbsolutePath().toString();
     }
 
     public void appendExtensionIfNotExists(String fileExtension) {
@@ -47,33 +50,60 @@ public class FileProcessor {
     }
 
     public void deleteFile() {
-        File file = new File(filePath.toUri());
-        if (!file.exists()) {
-            return;
-        }
-        file.delete();
+        deleteFileOrDir(new File(filePath.toUri()));
     }
 
     private static void makeDirs(Path dirs) throws IOException {
         try {
             Files.createDirectories(dirs);
-        } catch (FileAlreadyExistsException e) {
-            // pass
+        } catch (FileAlreadyExistsException ignored) {}
+    }
+
+    private static void deleteFileOrDir(File obj) {
+        if (obj != null && obj.exists()) {
+            obj.delete();
+        }
+    }
+
+    private static void cleanDir(File dir) {
+        if (dir == null || !dir.exists()) {
+            return;
+        }
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    cleanDir(file);
+                }
+                deleteFileOrDir(file);
+            }
         }
     }
 
     public static void deleteRootDir() {
-        File file = new File(pathToDataBaseRootDir);
-        if (!file.exists()) {
+        cleanRootDir();
+        if (pathToDataBaseRootDir != null) {
+            deleteFileOrDir(new File(pathToDataBaseRootDir));
+        }
+    }
+
+    public static void cleanRootDir() {
+        if (pathToDataBaseRootDir == null) {
             return;
         }
-        file.delete();
+        File dbRootDir = new File(pathToDataBaseRootDir);
+        cleanDir(dbRootDir);
     }
+
 
     public static String join(String ... members) {
         String first = members[0];
         String[] more = new String[members.length-1];
         System.arraycopy(members, 1, more, 0, members.length - 1);
         return Paths.get(first, more).toString();
+    }
+
+    public static String getAbsolute(String path) {
+        return Paths.get(path).toAbsolutePath().toString();
     }
 }

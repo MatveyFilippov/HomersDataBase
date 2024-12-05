@@ -17,11 +17,16 @@ import java.util.List;
 public class DataBase {
 
     public static void setPathToDataBase(String ... pathsToTable) {
-        FileProcessor.pathToDataBaseRootDir = FileProcessor.join(pathsToTable);
+        FileProcessor.pathToDataBaseRootDir = FileProcessor.getAbsolute(FileProcessor.join(pathsToTable));
     }
 
     public static void deleteTable() {
         FileProcessor.deleteRootDir();
+        FileProcessor.pathToDataBaseRootDir = null;
+    }
+
+    public static void cleanTable() {
+        FileProcessor.cleanRootDir();
     }
 
     public static void createTable(String primaryColumnName, DataTypes primaryColumnDataType) throws IOException {
