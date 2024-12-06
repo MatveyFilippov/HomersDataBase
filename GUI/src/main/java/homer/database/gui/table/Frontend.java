@@ -1,9 +1,11 @@
 package homer.database.gui.table;
 
+import homer.database.backend.engine.datatypes.helpers.DataTypes;
 import homer.database.gui.misc.ErrorAlert;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -15,7 +17,12 @@ import java.util.Map;
 
 class Frontend {
     static TableView<ObservableList<String>> table;
-    private static final Map<String, Integer> columns = new HashMap<>();
+    static final Map<String, Integer> columns = new HashMap<>();
+
+    static void setItemsToNewColumnDataTypeChoiceBox(DataTypes[] values, ChoiceBox<DataTypes> choiceBox) {
+        ObservableList<DataTypes> valuesToChoiceBox = FXCollections.observableArrayList(values);
+        choiceBox.setItems(valuesToChoiceBox);
+    }
 
     static void cleanTable() {
         columns.clear();
@@ -25,9 +32,16 @@ class Frontend {
 
     static void addColumn(String columnHeader) {
         TableColumn<ObservableList<String>, String> column = new TableColumn<>(columnHeader);
-        final int colIndex = table.getColumns().size();
+        final int colIndex = columns.size();
 
-        column.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(colIndex)));
+        column.setCellValueFactory(cellData -> {
+            ObservableList<String> row = cellData.getValue();
+            if (row.size() > colIndex) {
+                return new ReadOnlyStringWrapper(row.get(colIndex));
+            } else {
+                return new ReadOnlyStringWrapper("");
+            }
+        });
         column.setCellFactory(TextFieldTableCell.forTableColumn());
         column.setOnEditCommit(event -> {
             try {
@@ -52,8 +66,7 @@ class Frontend {
             createRow();
         } else {
             ObservableList<String> lastRow = table.getItems().get(lastLineIndex);
-            for (int i = 0; i < columns.size(); i++) {
-                String element = lastRow.get(i);
+            for (String element : lastRow) {
                 if (element != null && !element.isEmpty()) {
                     createRow();
                     return;

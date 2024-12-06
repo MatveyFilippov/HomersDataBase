@@ -5,6 +5,7 @@ import homer.database.backend.engine.columns.helpers.RecordUniqueID;
 import homer.database.backend.engine.datatypes.helpers.DataType;
 import homer.database.backend.engine.datatypes.helpers.DataTypes;
 import javafx.collections.ObservableList;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
@@ -15,11 +16,15 @@ import java.security.KeyException;
 public class TableProcessor {
     private static String primaryColumnName;
 
-    public static void init(TableView<ObservableList<String>> table) throws NameNotFoundException, IOException {
+    public static void init(TableView<ObservableList<String>> table, ChoiceBox<DataTypes> newColumnDataTypeChoiceBox) throws NameNotFoundException, IOException {
         Frontend.table = table;
+        Frontend.setItemsToNewColumnDataTypeChoiceBox(DataTypes.values(), newColumnDataTypeChoiceBox);
         refresh();
     }
 
+    public static boolean isNoColumns() {
+        return Frontend.columns.isEmpty();
+    }
 
     public static void refresh() throws IOException, NameNotFoundException {
         Frontend.cleanTable();
@@ -97,13 +102,22 @@ public class TableProcessor {
         int rowIndex = position.getRow();
         String columnName = removeColumnDataTypeFromColumnHeader(position.getTableColumn().getText());
         String newValue = event.getNewValue();
-        String primaryKey = Frontend.getCellValue(rowIndex, 0);
-        if (!columnName.equals(primaryColumnName) && (primaryKey == null || primaryKey.isEmpty())) {
-            throw new IOException("Before set value you should set primary key");
+        String primaryKey = "";
+        if (!columnName.equals(primaryColumnName)) {
+            primaryKey = Frontend.getCellValue(rowIndex, 0);
+            if (primaryKey == null || primaryKey.isEmpty()) {
+                throw new IOException("Before set value you should set primary key");
+            }
         }
         String parsedValue = editValueInDataBase(columnName, primaryKey, newValue);
         Frontend.putDataInCell(rowIndex, position.getColumn(), parsedValue);
         Frontend.makeSureThatLastLineIsFree();
+    }
+
+    public static void createPrimaryColumn(String columnName, DataTypes columnDataType) throws IOException, NameNotFoundException {
+        DataBase.createTable(columnName, columnDataType);
+        Frontend.addColumn(DataBase.getColumnHeader(columnName));
+        primaryColumnName = columnName;
     }
 
     public static void createColumn(String columnName, DataTypes columnDataType, boolean isUnique, boolean isNullPossible) throws IOException, NameNotFoundException {

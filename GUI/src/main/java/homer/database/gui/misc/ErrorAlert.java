@@ -21,6 +21,6 @@ public class ErrorAlert {
     }
 
     public static void showAlert(String errorName, String errorText) {
-        showAlert(errorName, errorText, true);
+        showAlert(errorName, errorText, false);
     }
 }
