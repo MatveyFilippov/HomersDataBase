@@ -6,8 +6,11 @@ import homer.database.gui.table.TableProcessor;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.collections.ObservableList;
+import org.checkerframework.checker.units.qual.A;
+
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
+import java.security.KeyException;
 
 public class AppController {
 
@@ -74,5 +77,24 @@ public class AppController {
     @FXML
     void refreshTable() throws NameNotFoundException, IOException {
         TableProcessor.refresh();
+    }
+
+    @FXML
+    void exportToBACKUP() throws IOException {
+        homer.database.converter.backup.Exporter.toBackupFile();
+    }
+
+    @FXML
+    void importFromBACKUP() throws IOException, NameNotFoundException {
+        homer.database.converter.backup.Importer.fromBackupFile(
+                "/Users/matvey/IdeaProjects/HomersDataBase/GUI/HomersDataBaseAppData/AppMainDataBase.HDBB",
+                AppProperties.PATH_TO_DATA_DIR
+        );
+        TableProcessor.refresh();
+    }
+
+    @FXML
+    void exportToCSV() throws NameNotFoundException, IOException, KeyException {
+        homer.database.converter.csv.Exporter.toCSV();
     }
 }
