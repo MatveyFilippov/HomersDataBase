@@ -2,12 +2,11 @@ package homer.database.gui.table;
 
 import homer.database.backend.engine.datatypes.helpers.DataTypes;
 import homer.database.gui.misc.ErrorAlert;
+import homer.database.gui.misc.ErrorLogger;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
@@ -17,6 +16,7 @@ import java.util.Map;
 
 class Frontend {
     static TableView<ObservableList<String>> table;
+    static ComboBox<Button> columnsToDelComboBox;
     static final Map<String, Integer> columns = new HashMap<>();
 
     static void setItemsToNewColumnDataTypeChoiceBox(DataTypes[] values, ChoiceBox<DataTypes> choiceBox) {
@@ -24,10 +24,27 @@ class Frontend {
         choiceBox.setItems(valuesToChoiceBox);
     }
 
+    static void setItemsToComboBoxWithColumnsToDel() {
+        ObservableList<Button> buttonsToComboBoxWithColumnsToDel = FXCollections.observableArrayList();
+        for (String columnHeader : columns.keySet()) {
+            Button buttonToDelColumn = new Button(columnHeader);
+            buttonToDelColumn.setOnAction(event -> {
+                try {
+                    TableProcessor.deleteColumn(columnHeader);
+                } catch (IOException | NameNotFoundException ex) {
+                    ErrorLogger.handleError(ex);
+                }
+            });
+            buttonsToComboBoxWithColumnsToDel.add(buttonToDelColumn);
+        }
+        columnsToDelComboBox.setItems(buttonsToComboBoxWithColumnsToDel);
+    }
+
     static void cleanTable() {
         columns.clear();
         table.getItems().clear();
         table.getColumns().clear();
+        setItemsToComboBoxWithColumnsToDel();
     }
 
     static void addColumn(String columnHeader) {
@@ -53,11 +70,13 @@ class Frontend {
 
         columns.put(columnHeader, table.getColumns().size());
         table.getColumns().add(column);
+        setItemsToComboBoxWithColumnsToDel();
     }
 
     static void deleteColumn(String columnHeader) {
         table.getColumns().remove(getColumnIndex(columnHeader));
         columns.remove(columnHeader);
+        setItemsToComboBoxWithColumnsToDel();
     }
 
     static void makeSureThatLastLineIsFree() {

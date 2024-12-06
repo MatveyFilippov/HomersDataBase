@@ -5,10 +5,8 @@ import homer.database.backend.engine.columns.helpers.RecordUniqueID;
 import homer.database.backend.engine.datatypes.helpers.DataType;
 import homer.database.backend.engine.datatypes.helpers.DataTypes;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
 import java.security.KeyException;
@@ -16,8 +14,10 @@ import java.security.KeyException;
 public class TableProcessor {
     private static String primaryColumnName;
 
-    public static void init(TableView<ObservableList<String>> table, ChoiceBox<DataTypes> newColumnDataTypeChoiceBox) throws NameNotFoundException, IOException {
+    public static void init(TableView<ObservableList<String>> table, ChoiceBox<DataTypes> newColumnDataTypeChoiceBox,
+                            ComboBox<Button> columnsToDelComboBox) throws NameNotFoundException, IOException {
         Frontend.table = table;
+        Frontend.columnsToDelComboBox = columnsToDelComboBox;
         Frontend.setItemsToNewColumnDataTypeChoiceBox(DataTypes.values(), newColumnDataTypeChoiceBox);
         refresh();
     }
@@ -132,8 +132,18 @@ public class TableProcessor {
     }
 
     public static void deleteColumn(String columnName) throws IOException, NameNotFoundException {
-        String columnHeader = DataBase.getColumnHeader(columnName);
-        DataBase.deleteColumn(columnName);
-        Frontend.deleteColumn(columnHeader);
+        columnName = removeColumnDataTypeFromColumnHeader(columnName);
+        if (columnName.equals(primaryColumnName)) {
+            deleteTable();
+        } else {
+            String columnHeader = DataBase.getColumnHeader(columnName);
+            DataBase.deleteColumn(columnName);
+            Frontend.deleteColumn(columnHeader);
+        }
+    }
+
+    public static void deleteTable() {
+        DataBase.deleteTable();
+        Frontend.cleanTable();
     }
 }

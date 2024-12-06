@@ -12,10 +12,10 @@ import java.io.IOException;
 public class AppController {
 
     @FXML
-    CheckBox isNewColumnNullPossible;
+    ComboBox<Button> columnsToDelComboBox;
 
     @FXML
-    CheckBox isNewColumnUnique;
+    CheckBox isNewColumnNullPossible, isNewColumnUnique;
 
     @FXML
     ChoiceBox<DataTypes> newColumnDataTypeChoiceBox;
@@ -29,7 +29,7 @@ public class AppController {
     @FXML
     private void initialize() throws NameNotFoundException, IOException {
         DataBase.setPathToDataBase(AppProperties.PATH_TO_DATA_DIR, AppProperties.DB_NAME);
-        TableProcessor.init(table, newColumnDataTypeChoiceBox);
+        TableProcessor.init(table, newColumnDataTypeChoiceBox, columnsToDelComboBox);
         resetToDefaultNewColumnCreationLine();
         setToWaitingNewPrimaryColumnCreationLineIfNecessary();
     }
