@@ -70,4 +70,9 @@ public class AppController {
     void tryToFindValue() throws NameNotFoundException, IOException {
         TableProcessor.findAllValues(columnNameToFindChoiceBox.getValue(), valueToFindField.getText());
     }
+
+    @FXML
+    void refreshTable() throws NameNotFoundException, IOException {
+        TableProcessor.refresh();
+    }
 }
