@@ -33,6 +33,7 @@ public class TableProcessor {
             fillRowsFromDB();
         } catch (KeyException ignored) {}
         Frontend.makeSureThatLastLineIsFree();
+        Frontend.makeSureThatAllLinesContainsRightCellQTY();
     }
 
     private static void fillColumnsFromDB() throws IOException, NameNotFoundException, KeyException {
@@ -82,12 +83,12 @@ public class TableProcessor {
         RecordUniqueID lineID = new RecordUniqueID(
                 DataBase.getColumnDataType(primaryColumnName).parseValue(primaryKey)
         );
-        DataBase.deleteValue(columnName, lineID);  // TODO: process to uniq in DataBase class
+        DataBase.deleteValue(columnName, lineID);
     }
 
     private static String editValueInDataBase(String columnName, String primaryKey, String value) throws NameNotFoundException, IOException, KeyException {
         DataType newValue = DataBase.getColumnDataType(columnName).parseValue(value);
-        if (newValue == null) {
+        if (newValue == null || newValue.toString().equals("null")) {
             if (value != null && !value.isEmpty()) {
                 throw new IOException("Invalid value for this column (error with DataType)");
             }
@@ -119,11 +120,15 @@ public class TableProcessor {
         DataBase.createTable(columnName, columnDataType);
         Frontend.addColumn(DataBase.getColumnHeader(columnName));
         primaryColumnName = columnName;
+        Frontend.makeSureThatLastLineIsFree();
+        Frontend.makeSureThatAllLinesContainsRightCellQTY();
     }
 
     public static void createColumn(String columnName, DataTypes columnDataType, boolean isUnique, boolean isNullPossible) throws IOException, NameNotFoundException {
         DataBase.createColumn(columnName, columnDataType, isUnique, isNullPossible);
         Frontend.addColumn(DataBase.getColumnHeader(columnName));
+        Frontend.makeSureThatLastLineIsFree();
+        Frontend.makeSureThatAllLinesContainsRightCellQTY();
     }
 
     public static void deleteColumn(String columnName) throws IOException, NameNotFoundException {

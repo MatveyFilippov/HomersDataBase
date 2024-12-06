@@ -75,6 +75,16 @@ class Frontend {
         }
     }
 
+    static void makeSureThatAllLinesContainsRightCellQTY() {
+        final int cellQTY = columns.size();
+        for (ObservableList<String> row : table.getItems()) {
+            for (int i = row.size(); i < cellQTY; i++) {
+                row.add("");
+            }
+            System.out.println();
+        }
+    }
+
     static int createRow() {
         ObservableList<String> row = FXCollections.observableArrayList();
         for (int i = 0; i < columns.size(); i++) {
