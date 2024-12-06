@@ -49,9 +49,10 @@ public class TableProcessor {
         for (RecordUniqueID lineID : DataBase.getAllRecordsIds()) {
             int rowIndex = Frontend.createRow();
             for (String columnName : DataBase.getColumnNames()) {
+                DataType data = DataBase.readValue(columnName, lineID);
                 Frontend.putDataInCell(
                         rowIndex, DataBase.getColumnHeader(columnName),
-                        DataBase.readValue(columnName, lineID).toString()
+                        data == null ? "" : data.toString()
                 );
             }
         }

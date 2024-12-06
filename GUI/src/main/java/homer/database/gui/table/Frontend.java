@@ -93,11 +93,11 @@ class Frontend {
     }
 
     static void putDataInCell(int row, int column, String data) {
-        table.getItems().get(row).add(column, data == null ? "" : data);
+        table.getItems().get(row).set(column, data == null ? "" : data);
     }
 
     static void putDataInCell(int row, String columnHeader, String data) {
-        table.getItems().get(row).add(getColumnIndex(columnHeader), data);
+        putDataInCell(row, getColumnIndex(columnHeader), data);
     }
 
     static String getCellValue(int row, int column) {

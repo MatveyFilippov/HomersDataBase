@@ -33,7 +33,6 @@ public class UniqueColumn<DT extends DataType> extends Column<DT> {
         if (value == null) {
             throw new NullPointerException("Value can't be null");
         }
-        deleteValue(recordUniqueID);
         try (HashDict ids = new HashDict(idsHashTableFile)) {
             String id = ids.get(value.toString(), null);
             if (id != null) {
@@ -41,6 +40,7 @@ public class UniqueColumn<DT extends DataType> extends Column<DT> {
                         "Value '" + value + "' already exists in column by id: " + id
                 );
             }
+            deleteValue(recordUniqueID);
             ids.put(value.toString(), recordUniqueID.toString());
         }
         super.writeValue(recordUniqueID, value);
