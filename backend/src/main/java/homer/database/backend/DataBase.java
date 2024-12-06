@@ -115,6 +115,9 @@ public class DataBase {
 
     private static void deleteValueWithoutCheckingToPrimary(String columnName, RecordUniqueID recordUniqueID) throws NameNotFoundException, IOException {
         Column<? extends DataType> column = ColumnsProcessor.getColumn(columnName);
+        if (!column.canBeNull) {
+            throw new IOException("You can't delete value in column where values can't be null");
+        }
         column.deleteValue(recordUniqueID);
     }
 
@@ -136,9 +139,9 @@ public class DataBase {
         }
     }
 
-    public static void deleteLine(RecordUniqueID recordUniqueID) throws IOException, NameNotFoundException {
+    public static void deleteLine(RecordUniqueID recordUniqueID) throws IOException {
         for (Column<? extends DataType> column : ColumnsProcessor.getColumns()) {
-            deleteValueWithoutCheckingToPrimary(column.columnName, recordUniqueID);
+            column.deleteValue(recordUniqueID);
         }
     }
 }

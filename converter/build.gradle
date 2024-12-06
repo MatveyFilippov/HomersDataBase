@@ -17,7 +17,7 @@ sourceCompatibility = '9'
 targetCompatibility = '9'
 
 dependencies {
-    implementation name: 'HomersDataBase-backend-1.1.1-WithDependencies'
+    implementation name: 'HomersDataBase-backend-1.1.2-WithDependencies'
 }
 
 jar {

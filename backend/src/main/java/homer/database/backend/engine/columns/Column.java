@@ -11,7 +11,7 @@ import java.util.List;
 
 public abstract class Column<DT extends DataType> {
     public final String columnName;
-    protected final boolean canBeNull;
+    public final boolean canBeNull;
     public final DataTypes dataType;
     protected final FileProcessor valuesHashTableFile;
     protected final String pathToColumnDirFromDBRoot;
