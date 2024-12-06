@@ -17,6 +17,7 @@ import java.util.Map;
 class Frontend {
     static TableView<ObservableList<String>> table;
     static ComboBox<Button> columnsToDelComboBox;
+    static ChoiceBox<String> columnNameToFindChoiceBox;
     static final Map<String, Integer> columns = new HashMap<>();
 
     static void setItemsToNewColumnDataTypeChoiceBox(DataTypes[] values, ChoiceBox<DataTypes> choiceBox) {
@@ -26,6 +27,7 @@ class Frontend {
 
     static void setItemsToComboBoxWithColumnsToDel() {
         ObservableList<Button> buttonsToComboBoxWithColumnsToDel = FXCollections.observableArrayList();
+        ObservableList<String> buttonsToFindIn = FXCollections.observableArrayList();
         for (String columnHeader : columns.keySet()) {
             Button buttonToDelColumn = new Button(columnHeader);
             buttonToDelColumn.setOnAction(event -> {
@@ -36,8 +38,10 @@ class Frontend {
                 }
             });
             buttonsToComboBoxWithColumnsToDel.add(buttonToDelColumn);
+            buttonsToFindIn.add(columnHeader);
         }
         columnsToDelComboBox.setItems(buttonsToComboBoxWithColumnsToDel);
+        columnNameToFindChoiceBox.setItems(buttonsToFindIn);
     }
 
     static void cleanTable() {

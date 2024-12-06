@@ -21,7 +21,10 @@ public class AppController {
     ChoiceBox<DataTypes> newColumnDataTypeChoiceBox;
 
     @FXML
-    TextField newColumnNameField;
+    ChoiceBox<String> columnNameToFindChoiceBox;
+
+    @FXML
+    TextField newColumnNameField, valueToFindField;
 
     @FXML
     TableView<ObservableList<String>> table;
@@ -29,7 +32,7 @@ public class AppController {
     @FXML
     private void initialize() throws NameNotFoundException, IOException {
         DataBase.setPathToDataBase(AppProperties.PATH_TO_DATA_DIR, AppProperties.DB_NAME);
-        TableProcessor.init(table, newColumnDataTypeChoiceBox, columnsToDelComboBox);
+        TableProcessor.init(table, newColumnDataTypeChoiceBox, columnsToDelComboBox, columnNameToFindChoiceBox);
         resetToDefaultNewColumnCreationLine();
         setToWaitingNewPrimaryColumnCreationLineIfNecessary();
     }
@@ -61,5 +64,10 @@ public class AppController {
         newColumnNameField.setPromptText(
                 isWaitingNewPrimaryColumn ? "PrimaryColumn name" : "New column name"
         );
+    }
+
+    @FXML
+    void tryToFindValue() throws NameNotFoundException, IOException {
+        TableProcessor.findAllValues(columnNameToFindChoiceBox.getValue(), valueToFindField.getText());
     }
 }

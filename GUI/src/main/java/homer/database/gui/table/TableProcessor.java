@@ -10,14 +10,16 @@ import javafx.scene.control.*;
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
 import java.security.KeyException;
+import java.util.List;
 
 public class TableProcessor {
     private static String primaryColumnName;
 
     public static void init(TableView<ObservableList<String>> table, ChoiceBox<DataTypes> newColumnDataTypeChoiceBox,
-                            ComboBox<Button> columnsToDelComboBox) throws NameNotFoundException, IOException {
+                            ComboBox<Button> columnsToDelComboBox, ChoiceBox<String> columnNameToFindChoiceBox) throws NameNotFoundException, IOException {
         Frontend.table = table;
         Frontend.columnsToDelComboBox = columnsToDelComboBox;
+        Frontend.columnNameToFindChoiceBox = columnNameToFindChoiceBox;
         Frontend.setItemsToNewColumnDataTypeChoiceBox(DataTypes.values(), newColumnDataTypeChoiceBox);
         refresh();
     }
@@ -145,5 +147,27 @@ public class TableProcessor {
     public static void deleteTable() {
         DataBase.deleteTable();
         Frontend.cleanTable();
+    }
+
+    public static void findAllValues(String columnNameToFind, String value) throws NameNotFoundException, IOException {
+        columnNameToFind = removeColumnDataTypeFromColumnHeader(columnNameToFind);
+        System.out.println(columnNameToFind);
+        List<RecordUniqueID> lineIDs = DataBase.findValues(columnNameToFind, DataBase.tryToParseValue(columnNameToFind, value));
+        Frontend.cleanTable();
+        try {
+            fillColumnsFromDB();
+            for (RecordUniqueID lineID : lineIDs) {
+                int rowIndex = Frontend.createRow();
+                for (String columnName : DataBase.getColumnNames()) {
+                    DataType data = DataBase.readValue(columnName, lineID);
+                    Frontend.putDataInCell(
+                            rowIndex, DataBase.getColumnHeader(columnName),
+                            data == null ? "" : data.toString()
+                    );
+                }
+            }
+        } catch (KeyException ignored) {}
+        Frontend.makeSureThatLastLineIsFree();
+        Frontend.makeSureThatAllLinesContainsRightCellQTY();
     }
 }
