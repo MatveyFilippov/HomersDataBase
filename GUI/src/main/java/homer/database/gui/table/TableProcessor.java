@@ -151,7 +151,6 @@ public class TableProcessor {
 
     public static void findAllValues(String columnNameToFind, String value) throws NameNotFoundException, IOException {
         columnNameToFind = removeColumnDataTypeFromColumnHeader(columnNameToFind);
-        System.out.println(columnNameToFind);
         List<RecordUniqueID> lineIDs = DataBase.findValues(columnNameToFind, DataBase.tryToParseValue(columnNameToFind, value));
         Frontend.cleanTable();
         try {

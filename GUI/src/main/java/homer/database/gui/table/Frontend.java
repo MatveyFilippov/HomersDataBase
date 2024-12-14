@@ -104,7 +104,6 @@ class Frontend {
             for (int i = row.size(); i < cellQTY; i++) {
                 row.add("");
             }
-            System.out.println();
         }
     }
 
