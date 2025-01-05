@@ -6,8 +6,6 @@ import homer.database.gui.table.TableProcessor;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.collections.ObservableList;
-import org.checkerframework.checker.units.qual.A;
-
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
 import java.security.KeyException;
@@ -15,7 +13,7 @@ import java.security.KeyException;
 public class AppController {
 
     @FXML
-    ComboBox<Button> columnsToDelComboBox;
+    MenuButton columnsToDelMenuButton;
 
     @FXML
     CheckBox isNewColumnNullPossible, isNewColumnUnique;
@@ -35,7 +33,7 @@ public class AppController {
     @FXML
     private void initialize() throws NameNotFoundException, IOException {
         DataBase.setPathToDataBase(AppProperties.PATH_TO_DATA_DIR, AppProperties.DB_NAME);
-        TableProcessor.init(table, newColumnDataTypeChoiceBox, columnsToDelComboBox, columnNameToFindChoiceBox);
+        TableProcessor.init(table, newColumnDataTypeChoiceBox, columnsToDelMenuButton, columnNameToFindChoiceBox);
         resetToDefaultNewColumnCreationLine();
         setToWaitingNewPrimaryColumnCreationLineIfNecessary();
     }

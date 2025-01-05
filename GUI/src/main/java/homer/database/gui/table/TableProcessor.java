@@ -16,9 +16,9 @@ public class TableProcessor {
     private static String primaryColumnName;
 
     public static void init(TableView<ObservableList<String>> table, ChoiceBox<DataTypes> newColumnDataTypeChoiceBox,
-                            ComboBox<Button> columnsToDelComboBox, ChoiceBox<String> columnNameToFindChoiceBox) throws NameNotFoundException, IOException {
+                            MenuButton columnsToDelMenuButton, ChoiceBox<String> columnNameToFindChoiceBox) throws NameNotFoundException, IOException {
         Frontend.table = table;
-        Frontend.columnsToDelComboBox = columnsToDelComboBox;
+        Frontend.columnsToDelMenuButton = columnsToDelMenuButton;
         Frontend.columnNameToFindChoiceBox = columnNameToFindChoiceBox;
         Frontend.setItemsToNewColumnDataTypeChoiceBox(DataTypes.values(), newColumnDataTypeChoiceBox);
         refresh();

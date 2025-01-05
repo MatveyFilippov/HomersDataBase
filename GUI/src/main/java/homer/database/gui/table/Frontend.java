@@ -16,7 +16,7 @@ import java.util.Map;
 
 class Frontend {
     static TableView<ObservableList<String>> table;
-    static ComboBox<Button> columnsToDelComboBox;
+    static MenuButton columnsToDelMenuButton;
     static ChoiceBox<String> columnNameToFindChoiceBox;
     static final Map<String, Integer> columns = new HashMap<>();
 
@@ -26,21 +26,20 @@ class Frontend {
     }
 
     static void setItemsToComboBoxWithColumnsToDel() {
-        ObservableList<Button> buttonsToComboBoxWithColumnsToDel = FXCollections.observableArrayList();
         ObservableList<String> buttonsToFindIn = FXCollections.observableArrayList();
+        columnsToDelMenuButton.getItems().clear();
         for (String columnHeader : columns.keySet()) {
-            Button buttonToDelColumn = new Button(columnHeader);
-            buttonToDelColumn.setOnAction(event -> {
+            MenuItem itemToDelColumn = new MenuItem(columnHeader);
+            itemToDelColumn.setOnAction(event -> {
                 try {
                     TableProcessor.deleteColumn(columnHeader);
                 } catch (IOException | NameNotFoundException ex) {
                     ErrorLogger.handleError(ex);
                 }
             });
-            buttonsToComboBoxWithColumnsToDel.add(buttonToDelColumn);
+            columnsToDelMenuButton.getItems().add(itemToDelColumn);
             buttonsToFindIn.add(columnHeader);
         }
-        columnsToDelComboBox.setItems(buttonsToComboBoxWithColumnsToDel);
         columnNameToFindChoiceBox.setItems(buttonsToFindIn);
     }
 
