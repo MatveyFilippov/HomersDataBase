@@ -12,9 +12,9 @@ public class DataBaseApplication extends Application {
     public void start(Stage stage) throws IOException {
         Thread.setDefaultUncaughtExceptionHandler(ErrorLogger::appErrorHandler);
 
-        FXMLLoader fxmlLoader = new FXMLLoader(DataBaseApplication.class.getResource("HomersDataBaseAppView.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(DataBaseApplication.class.getResource("HomerDataBaseAppView.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1024, 720);
-        stage.setTitle("HomersDataBase");
+        stage.setTitle("HomerDataBase");
         stage.setScene(scene);
         stage.show();
     }

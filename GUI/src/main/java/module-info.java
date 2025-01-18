@@ -1,9 +1,9 @@
 module homer.database.gui {
     requires javafx.controls;
     requires javafx.fxml;
-    requires HomersDataBase.backend;
+    requires HomerDataBase.backend;
     requires java.naming;
-    requires HomersDataBase.convertor;
+    requires HomerDataBase.convertor;
 
 
     opens homer.database.gui to javafx.fxml;

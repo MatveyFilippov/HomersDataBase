@@ -85,7 +85,7 @@ public class AppController {
     @FXML
     void importFromBACKUP() throws IOException, NameNotFoundException {
         homer.database.converter.backup.Importer.fromBackupFile(
-                "/Users/matvey/IdeaProjects/HomersDataBase/GUI/HomersDataBaseAppData/AppMainDataBase.HDBB",
+                "/Users/matvey/IdeaProjects/HomerDataBase/GUI/HomersDataBaseAppData/AppMainDataBase.HDBB",
                 AppProperties.PATH_TO_DATA_DIR
         );
         TableProcessor.refresh();

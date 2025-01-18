@@ -18,7 +18,7 @@ dependencies {
 }
 
 jar {
-    archivesBaseName = 'HomersDataBase-backend'
+    archivesBaseName = 'HomerDataBase-backend'
     manifest {
         attributes(
                 'Implementation-Title': project.name,
@@ -28,7 +28,7 @@ jar {
 }
 
 shadowJar {
-    archiveBaseName.set('HomersDataBase-backend')
+    archiveBaseName.set('HomerDataBase-backend')
     archiveClassifier.set('WithDependencies')
     manifest {
         attributes(
