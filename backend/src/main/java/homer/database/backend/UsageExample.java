@@ -1,24 +1,24 @@
 package homer.database.backend;
 
-import homer.database.backend.engine.columns.helpers.RecordUniqueID;
-import homer.database.backend.engine.datatypes.NumberType;
-import homer.database.backend.engine.datatypes.helpers.DataTypes;
-
+import homer.database.backend.engine.columns.base.RecordUniqueID;
+import homer.database.backend.engine.datatypes.implementations.NumberType;
+import homer.database.backend.engine.datatypes.implementations.StringType;
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
 import java.security.KeyException;
 
 class UsageExample {
+
     public static void main(String[] args) throws IOException, NameNotFoundException, KeyException {
-        DataBase.setPathToDataBase("DataBaseExample");
+        DataBase.openTable("DataBaseExample");
         DataBase.cleanTable();
 
-        DataBase.createTable("ID", DataTypes.NUMBER);
-        DataBase.createColumn("Name", DataTypes.STRING, false, true);
+        DataBase.createTable("ID", NumberType.class);
+        DataBase.createColumn("Name", StringType.class, false, true);
 
         NumberType id1 = new NumberType(1);
         RecordUniqueID newLineID = DataBase.createNewLine(id1);
-        DataBase.writeValue("Name", newLineID, DataTypes.STRING.parseValue("Homer"));
+        DataBase.writeValue("Name", newLineID, new StringType("Homer"));
 
         for (String columnName : DataBase.getColumnNames()) {
             System.out.print(DataBase.getColumnHeader(columnName) + "\t");
@@ -31,4 +31,5 @@ class UsageExample {
             System.out.println();
         }
     }
+
 }

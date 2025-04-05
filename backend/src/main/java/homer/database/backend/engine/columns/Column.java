@@ -1,85 +1,30 @@
 package homer.database.backend.engine.columns;
 
-import homer.database.backend.engine.FileProcessor;
-import homer.database.backend.engine.HashDict;
-import homer.database.backend.engine.columns.helpers.RecordUniqueID;
-import homer.database.backend.engine.datatypes.helpers.DataType;
-import homer.database.backend.engine.datatypes.helpers.DataTypes;
+import homer.database.backend.engine.columns.base.RecordUniqueID;
+import homer.database.backend.engine.datatypes.DataType;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Column<DT extends DataType> {
-    public final String columnName;
-    public final boolean canBeNull;
-    public final DataTypes dataType;
-    protected final FileProcessor valuesHashTableFile;
-    protected final String pathToColumnDirFromDBRoot;
+public interface Column<DT extends DataType<?>> {
 
-    public Column(String columnName, boolean canBeNull, DataTypes dataType) {
-        pathToColumnDirFromDBRoot = FileProcessor.join(
-                FileProcessor.Constants.HDBC_FOLDER_NAME,
-                columnName.replace(" ", "_")
-        );
-        valuesHashTableFile = new FileProcessor("Values", pathToColumnDirFromDBRoot);
+    void writeValue(RecordUniqueID recordUniqueID, DT value) throws IOException;
 
-        this.columnName = columnName;
-        this.canBeNull = canBeNull;
-        this.dataType = dataType;
-    }
+    DT readValue(RecordUniqueID recordUniqueID) throws IOException;
 
-    public void writeValue(RecordUniqueID recordUniqueID, DT value) throws IOException {
-        if (value == null) {
-            if (canBeNull) {
-                deleteValue(recordUniqueID);
-                return;
-            }
-            throw new NullPointerException("Value can't be null");
-        }
-        try (HashDict values = new HashDict(valuesHashTableFile)) {
-            values.put(recordUniqueID.toString(), value.toString());
-        }
-    }
+    void deleteValue(RecordUniqueID recordUniqueID) throws IOException;
 
-    public DT readValue(RecordUniqueID recordUniqueID) throws IOException {
-        try (HashDict values = new HashDict(valuesHashTableFile)) {
-            String value = values.get(recordUniqueID.toString(), null);
-            return dataType.parseValue(value);
-        }
-    }
+    List<RecordUniqueID> getRecordsUniqueID(DT value) throws IOException;
 
-    public List<RecordUniqueID> getRecordsUniqueID(DT value) throws IOException {
-        List<RecordUniqueID> recordsUniqueID = new ArrayList<>();
-        if (value == null) {
-            return recordsUniqueID;
-        }
-        try (HashDict values = new HashDict(valuesHashTableFile)) {
-            List<String> keys = values.findKeysByValue(value.toString());
-            for (String key : keys) {
-                recordsUniqueID.add(new RecordUniqueID(dataType.parseValue(key)));
-            }
-        }
-        return recordsUniqueID;
-    }
+    void cleanColumn() throws IOException;
 
-    public void deleteValue(RecordUniqueID recordUniqueID) throws IOException {
-        try (HashDict values = new HashDict(valuesHashTableFile)) {
-            values.remove(recordUniqueID.toString());
-        }
-    }
+    void deleteColumn();
 
-    public void cleanColumn() throws IOException {
-        try (HashDict values = new HashDict(valuesHashTableFile)) {
-            values.cleanDict();
-        }
-    }
+    String getColumnName();
 
-    public void deleteColumn() {
-        FileProcessor.deleteDir(FileProcessor.join(FileProcessor.pathToDataBaseRootDir, pathToColumnDirFromDBRoot));
-    }
+    Class<DT> getColumnDataTypeClass();
 
-    @Override
-    public String toString() {
-        return columnName + " (" + dataType + ")";
-    }
+    boolean isNullValuesPossible();
+
+    String getDatabaseHeader();
+
 }

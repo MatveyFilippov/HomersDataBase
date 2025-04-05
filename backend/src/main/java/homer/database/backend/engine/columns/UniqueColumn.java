@@ -2,27 +2,30 @@ package homer.database.backend.engine.columns;
 
 import homer.database.backend.engine.FileProcessor;
 import homer.database.backend.engine.HashDict;
-import homer.database.backend.engine.columns.helpers.RecordUniqueID;
-import homer.database.backend.engine.datatypes.helpers.DataType;
-import homer.database.backend.engine.datatypes.helpers.DataTypes;
+import homer.database.backend.engine.columns.base.RecordUniqueID;
+import homer.database.backend.engine.datatypes.DataType;
+import homer.database.backend.engine.datatypes.Parser;
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class UniqueColumn<DT extends DataType> extends Column<DT> {
+public class UniqueColumn<DT extends DataType<?>> extends SimpleColumn<DT> {
+
     protected final FileProcessor idsHashTableFile;
 
-    public UniqueColumn(String columnName, DataTypes dataType) {
-        super(columnName, false, dataType);
+    public UniqueColumn(String columnName, Class<DT> dataTypeClass) {
+        super(columnName, false, dataTypeClass);
         idsHashTableFile = new FileProcessor("Ids", pathToColumnDirFromDBRoot);
     }
 
-    public List<DT> getAllValues() throws IOException {
-        List<DT> values = new ArrayList<>();
+    public Set<DT> getAllValues() throws IOException {
+        Set<DT> values = new HashSet<>();
         try (HashDict valuesDict = new HashDict(valuesHashTableFile)) {
             for (String value : valuesDict.getAllValues()) {
-                values.add(dataType.parseValue(value));
+                values.add(Parser.getInstance(columnDataTypeClass, value));
             }
         }
         return values;
@@ -36,12 +39,10 @@ public class UniqueColumn<DT extends DataType> extends Column<DT> {
         try (HashDict ids = new HashDict(idsHashTableFile)) {
             String id = ids.get(value.toString(), null);
             if (id != null) {
-                throw new KeyAlreadyExistsException(
-                        "Value '" + value + "' already exists in column by id: " + id
-                );
+                throw new KeyAlreadyExistsException("Value '" + value + "' already exists in column by id: " + id);
             }
             deleteValue(recordUniqueID);
-            ids.put(value.toString(), recordUniqueID.toString());
+            ids.put(value.toString(), recordUniqueID.toDatabase());
         }
         super.writeValue(recordUniqueID, value);
     }
@@ -55,7 +56,7 @@ public class UniqueColumn<DT extends DataType> extends Column<DT> {
         try (HashDict ids = new HashDict(idsHashTableFile)) {
             String recordUniqueID = ids.get(value.toString(), null);
             if (recordUniqueID != null) {
-                recordsUniqueID.add(new RecordUniqueID(dataType.parseValue(recordUniqueID)));
+                recordsUniqueID.add(new RecordUniqueID(Parser.getInstance(columnDataTypeClass, recordUniqueID)));
             }
         }
         return recordsUniqueID;
@@ -80,4 +81,5 @@ public class UniqueColumn<DT extends DataType> extends Column<DT> {
             ids.cleanDict();
         }
     }
+
 }

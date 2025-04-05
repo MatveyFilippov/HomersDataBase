@@ -1,32 +1,29 @@
 package homer.database.backend.engine;
 
-import java.io.RandomAccessFile;
+import com.google.common.hash.Hashing;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import com.google.common.hash.Hashing;
 
 public class HashDict implements AutoCloseable {
-    private final RandomAccessFile fileHashDict;
+
     public final int BUCKET_SIZE = 256;  // Max size of key + value
     public final int DICT_SIZE = 1024;  // Number of cells in dict
+    private final RandomAccessFile fileHashDict;
 
     public HashDict(FileProcessor hashDictFile) throws IOException {
         hashDictFile.appendExtensionIfNotExists(FileProcessor.Constants.HASH_DICT_FILE_EXTENSION);
-
         this.fileHashDict = hashDictFile.getRandomAccessFile();
-
         if (fileHashDict.length() == 0) {
             cleanDict();
         }
     }
 
     private long getPosition(String key) {
-        final long hash = Math.abs(
-                Hashing.murmur3_32_fixed().hashString(key, StandardCharsets.UTF_8).asInt() % DICT_SIZE
-        );
-        return hash * BUCKET_SIZE;
+        final long hash = Hashing.murmur3_32_fixed().hashString(key, StandardCharsets.UTF_8).asInt();
+        return Math.abs(hash % DICT_SIZE) * BUCKET_SIZE;
     }
 
     private void cleanCell(long position) throws IOException {
@@ -66,11 +63,7 @@ public class HashDict implements AutoCloseable {
         long position = getPosition(key);
 
         cleanCell(position);
-        writeKeyValue(
-                position,
-                key.getBytes(StandardCharsets.UTF_8),
-                value.getBytes(StandardCharsets.UTF_8)
-        );
+        writeKeyValue(position, key.getBytes(StandardCharsets.UTF_8), value.getBytes(StandardCharsets.UTF_8));
     }
 
     public String get(String key, String defaultValueIfNotExists) throws IOException {
@@ -136,13 +129,12 @@ public class HashDict implements AutoCloseable {
     public void remove(String key) {
         try {
             cleanCell(getPosition(key));
-        } catch (IOException ex) {
-            // pass
-        }
+        } catch (IOException ignored) {}
     }
 
     @Override
     public void close() throws IOException {
         fileHashDict.close();
     }
+
 }

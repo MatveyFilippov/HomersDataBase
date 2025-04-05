@@ -1,4 +1,4 @@
-package homer.database.backend.engine.columns.helpers;
+package homer.database.backend.engine.columns.base;
 
 import homer.database.backend.engine.FileProcessor;
 import homer.database.backend.engine.HashDict;
@@ -9,28 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ColumnParamsHashTable {
-    private static final FileProcessor primaryColumn = new FileProcessor(
-            "PrimaryColumn",
-            FileProcessor.Constants.HDBT_FOLDER_NAME
-    );
-    private static final FileProcessor names = new FileProcessor(
-            "ColumnNames",
-            FileProcessor.Constants.HDBT_FOLDER_NAME
-    );
-    private static final FileProcessor dataTypes = new FileProcessor(
-            "ColumnDataTypes",
-            FileProcessor.Constants.HDBT_FOLDER_NAME
-    );
-    private static final FileProcessor columnsWithUniqueValues = new FileProcessor(
-            "ColumnsWithUniqueValues",
-            FileProcessor.Constants.HDBT_FOLDER_NAME
-    );
-    private static final FileProcessor columnsWithNullValues = new FileProcessor(
-            "ColumnsWithNullValues",
-            FileProcessor.Constants.HDBT_FOLDER_NAME
-    );
 
-    public static boolean isNameUsed(String columnName) throws IOException {
+    private static final FileProcessor primaryColumn = new FileProcessor("PrimaryColumn", FileProcessor.Constants.HDBT_FOLDER_NAME);
+    private static final FileProcessor names = new FileProcessor("ColumnNames", FileProcessor.Constants.HDBT_FOLDER_NAME);
+    private static final FileProcessor dataTypes = new FileProcessor("ColumnDataTypes", FileProcessor.Constants.HDBT_FOLDER_NAME);
+    private static final FileProcessor columnsWithUniqueValues = new FileProcessor("ColumnsWithUniqueValues", FileProcessor.Constants.HDBT_FOLDER_NAME);
+    private static final FileProcessor columnsWithNullValues = new FileProcessor("ColumnsWithNullValues", FileProcessor.Constants.HDBT_FOLDER_NAME);
+    public final String columnName;
+
+    public static boolean isColumnNameUsed(String columnName) throws IOException {
         try (HashDict namesDict = new HashDict(names)) {
             return namesDict.isKeyExists(columnName);
         }
@@ -42,7 +29,8 @@ class ColumnParamsHashTable {
             for (String key : namesDict.getAllKeys()) {
                 try {
                     result.add(new ColumnParamsHashTable(key));
-                } catch (NameNotFoundException ignored) {}
+                } catch (NameNotFoundException ignored) {
+                }
             }
         }
         return result;
@@ -81,12 +69,12 @@ class ColumnParamsHashTable {
         }
     }
 
-    public static void registerNewPrimaryColumn(String primaryColumnName, String dataType) throws IOException {
+    public static void registerNewPrimaryColumn(String columnName, String dataType) throws IOException {
+        registerNewColumn(columnName, dataType, true, false);
         try (HashDict primaryColumnDict = new HashDict(primaryColumn)) {
             primaryColumnDict.cleanDict();
-            primaryColumnDict.put(primaryColumnName, primaryColumnName);
+            primaryColumnDict.put(columnName, columnName);
         }
-        registerNewColumn(primaryColumnName, dataType, true, false);
     }
 
     public static void deleteColumn(String columnName) {
@@ -105,19 +93,17 @@ class ColumnParamsHashTable {
         } catch (IOException ignored) {}
     }
 
-    public final String columnName;
-
-    public ColumnParamsHashTable(String columnName) throws IOException, NameNotFoundException {
-        if (!isColumnExistsInRequiredDicts(columnName)) {
-            throw new NameNotFoundException("Column not exists in table...");
-        }
-        this.columnName = columnName;
-    }
-
-    private static boolean isColumnExistsInRequiredDicts(String columnName) throws IOException {
+    private static boolean isAllColumnParamsExists(String columnName) throws IOException {
         try (HashDict namesDict = new HashDict(names); HashDict dataTypesDict = new HashDict(dataTypes)) {
             return namesDict.isKeyExists(columnName) && dataTypesDict.isKeyExists(columnName);
         }
+    }
+
+    public ColumnParamsHashTable(String columnName) throws IOException, NameNotFoundException {
+        if (!isAllColumnParamsExists(columnName)) {
+            throw new NameNotFoundException("Column not exists in table...");
+        }
+        this.columnName = columnName;
     }
 
     public String getDataType() throws IOException {
@@ -143,4 +129,5 @@ class ColumnParamsHashTable {
             return columnsWithNullValuesDict.isKeyExists(columnName);
         }
     }
+
 }
