@@ -42,3 +42,4 @@ bin/
 .DS_Store
 /converter/libs/
 /GUI/libs/
+/local-repo/
