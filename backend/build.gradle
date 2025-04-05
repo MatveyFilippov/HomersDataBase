@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'maven-publish'
 }
 
 group 'homer.database'
@@ -17,8 +18,9 @@ dependencies {
     implementation 'com.google.guava:guava:33.3.1-jre'
 }
 
-jar {
-    archivesBaseName = 'HomerDataBase-backend'
+shadowJar {
+    archiveBaseName.set('HomerDataBase')
+    archiveClassifier.set('backend')
     manifest {
         attributes(
                 'Implementation-Title': project.name,
@@ -27,13 +29,16 @@ jar {
     }
 }
 
-shadowJar {
-    archiveBaseName.set('HomerDataBase-backend')
-    archiveClassifier.set('WithDependencies')
-    manifest {
-        attributes(
-                'Implementation-Title': project.name,
-                'Implementation-Version': project.version
-        )
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifactId = 'backend'
+        }
+    }
+    repositories {
+        maven {
+            url = uri("${rootDir}/../local-repo")
+        }
     }
 }

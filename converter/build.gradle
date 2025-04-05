@@ -1,9 +1,10 @@
 plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'maven-publish'
 }
 
-group 'homer.convertor'
+group 'homer.database'
 version '1.0'
 
 repositories {
@@ -11,28 +12,22 @@ repositories {
     flatDir {
         dirs 'libs'
     }
+    maven {
+        url uri("${rootDir}/../local-repo")
+    }
 }
 
 sourceCompatibility = '9'
 targetCompatibility = '9'
 
 dependencies {
-    implementation name: 'HomerDataBase-backend-1.1.3-WithDependencies'
-}
-
-jar {
-    archivesBaseName = 'HomerDataBase-convertor'
-    manifest {
-        attributes(
-                'Implementation-Title': project.name,
-                'Implementation-Version': project.version
-        )
-    }
+    // implementation name: 'HomerDataBase-1.0.0-backend'
+    implementation 'homer.database:backend:beta-1.2.0'
 }
 
 shadowJar {
-    archiveBaseName.set('HomerDataBase-convertor')
-    archiveClassifier.set('WithDependencies')
+    archiveBaseName.set('HomerDataBase')
+    archiveClassifier.set('convertor')
     manifest {
         attributes(
                 'Implementation-Title': project.name,
@@ -41,5 +36,19 @@ shadowJar {
     }
     dependencies {
         exclude(dependency(':HomerDataBase-backend-1.1.3-WithDependencies'))
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifactId = 'convertor'
+        }
+    }
+    repositories {
+        maven {
+            url = uri("${rootDir}/../local-repo")
+        }
     }
 }
