@@ -39,14 +39,14 @@ public class SimpleColumn<DT extends DataType<?>> implements Column<DT> {
             throw new NullPointerException("Value can't be null");
         }
         try (HashDict values = new HashDict(valuesHashTableFile)) {
-            values.put(recordUniqueID.toDatabase(), value.toDatabase());
+            values.put(recordUniqueID.toDatBase(), value.toDatBase());
         }
     }
 
     @Override
     public DT readValue(RecordUniqueID recordUniqueID) throws IOException {
         try (HashDict values = new HashDict(valuesHashTableFile)) {
-            String value = values.get(recordUniqueID.toDatabase(), null);
+            String value = values.get(recordUniqueID.toDatBase(), null);
             return Parser.getInstance(columnDataTypeClass, value);
         }
     }
@@ -58,7 +58,7 @@ public class SimpleColumn<DT extends DataType<?>> implements Column<DT> {
             return recordsUniqueID;
         }
         try (HashDict values = new HashDict(valuesHashTableFile)) {
-            List<String> keys = values.findKeysByValue(value.toDatabase());
+            List<String> keys = values.findKeysByValue(value.toDatBase());
             for (String key : keys) {
                 recordsUniqueID.add(new RecordUniqueID(Parser.getInstance(columnDataTypeClass, key)));
             }
@@ -69,7 +69,7 @@ public class SimpleColumn<DT extends DataType<?>> implements Column<DT> {
     @Override
     public void deleteValue(RecordUniqueID recordUniqueID) throws IOException {
         try (HashDict values = new HashDict(valuesHashTableFile)) {
-            values.remove(recordUniqueID.toDatabase());
+            values.remove(recordUniqueID.toDatBase());
         }
     }
 
@@ -101,7 +101,7 @@ public class SimpleColumn<DT extends DataType<?>> implements Column<DT> {
     }
 
     @Override
-    public String getDatabaseHeader() {
+    public String getDataBaseHeader() {
         return getColumnName() + " (" + dataTypeNullInstance.getDataTypeName() + ")";
     }
 

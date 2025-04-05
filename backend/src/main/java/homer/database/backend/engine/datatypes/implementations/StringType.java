@@ -19,7 +19,7 @@ public class StringType extends DataType<String> {
     }
 
     @Override
-    protected String toDatabaseValue(String value) {
+    protected String toDataBaseValue(String value) {
         return value;
     }
 

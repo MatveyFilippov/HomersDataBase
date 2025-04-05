@@ -14,9 +14,9 @@ public abstract class DataType<DT> {
 
     protected abstract DT toJavaValue(String value);
 
-    protected abstract String toDatabaseValue(DT value);
+    protected abstract String toDataBaseValue(DT value);
 
-    void fromDatabase(String value) {
+    void fromDataBase(String value) {
         this.value = value == null ? null : toJavaValue(value);
     }
 
@@ -28,13 +28,13 @@ public abstract class DataType<DT> {
         return isNull() ? null : toJavaValue(value.toString());
     }
 
-    public String toDatabase() {
-        return isNull() ? null : toDatabaseValue(value);
+    public String toDatBase() {
+        return isNull() ? null : toDataBaseValue(value);
     }
 
     @Override
     public String toString() {
-        return getDataTypeName() + ": '" + toDatabase() + "'";
+        return getDataTypeName() + ": '" + toDatBase() + "'";
     }
 
 }

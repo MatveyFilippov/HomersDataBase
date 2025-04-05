@@ -85,7 +85,7 @@ public class DataBase {
 
     public static String getColumnHeader(String columnName) throws IOException, NameNotFoundException {
         Column<? extends DataType<?>> column = ColumnsProcessor.getColumn(columnName);
-        return column.getDatabaseHeader();
+        return column.getDataBaseHeader();
     }
 
     public static Class<? extends DataType<?>> getColumnDataType(String columnName) throws NameNotFoundException, IOException {

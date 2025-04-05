@@ -14,8 +14,8 @@ public class RecordUniqueID {
         return (DT) currentKey;
     }
 
-    public String toDatabase() {
-        return currentKey.toDatabase();
+    public String toDatBase() {
+        return currentKey.toDatBase();
     }
 
     @Override

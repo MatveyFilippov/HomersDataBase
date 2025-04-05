@@ -21,7 +21,7 @@ public class NumberType extends DataType<Double> {
     }
 
     @Override
-    protected String toDatabaseValue(Double value) {
+    protected String toDataBaseValue(Double value) {
         return value % 1 == 0 ? String.valueOf(value.intValue()) : String.valueOf(value);
     }
 

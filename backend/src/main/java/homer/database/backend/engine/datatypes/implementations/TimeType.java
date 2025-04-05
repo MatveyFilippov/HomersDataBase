@@ -35,7 +35,7 @@ public class TimeType extends DataType<Map<String, Integer>> {
     }
 
     @Override
-    protected String toDatabaseValue(Map<String, Integer> value) {
+    protected String toDataBaseValue(Map<String, Integer> value) {
         String hourStr = value.get(TimeKeys.HOURS).toString();
         String minuteStr = value.get(TimeKeys.MINUTES).toString();
         if (hourStr.length() == 1) {

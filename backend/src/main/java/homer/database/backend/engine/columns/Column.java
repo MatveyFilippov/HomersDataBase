@@ -25,6 +25,6 @@ public interface Column<DT extends DataType<?>> {
 
     boolean isNullValuesPossible();
 
-    String getDatabaseHeader();
+    String getDataBaseHeader();
 
 }

@@ -36,7 +36,7 @@ public class Parser {
 
     public static <DT extends DataType<?>> DT getInstance(Class<? extends DataType<?>> dataType, String value) {
         DT result = getNullInstance(dataType);
-        result.fromDatabase(value);
+        result.fromDataBase(value);
         return result;
     }
 

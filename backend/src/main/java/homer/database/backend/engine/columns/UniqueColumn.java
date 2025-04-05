@@ -42,7 +42,7 @@ public class UniqueColumn<DT extends DataType<?>> extends SimpleColumn<DT> {
                 throw new KeyAlreadyExistsException("Value '" + value + "' already exists in column by id: " + id);
             }
             deleteValue(recordUniqueID);
-            ids.put(value.toString(), recordUniqueID.toDatabase());
+            ids.put(value.toString(), recordUniqueID.toDatBase());
         }
         super.writeValue(recordUniqueID, value);
     }

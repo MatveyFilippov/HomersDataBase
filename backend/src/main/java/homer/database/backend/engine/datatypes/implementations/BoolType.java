@@ -24,7 +24,7 @@ public class BoolType extends DataType<Boolean> {
     }
 
     @Override
-    protected String toDatabaseValue(Boolean value) {
+    protected String toDataBaseValue(Boolean value) {
         return value ? "1" : "0";
     }
 
