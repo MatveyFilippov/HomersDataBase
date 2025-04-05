@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 public class Importer {
+
     private static void raiseErrorIfInvalidBackupFile(String pathToBackupFile) throws IOException {
         if (!BackupExtension.HDBB.isFilePathEndsWithExtension(pathToBackupFile)) {
             throw new IOException("Invalid backup file, it must ends with: " + BackupExtension.HDBB);
@@ -21,7 +22,7 @@ public class Importer {
     }
 
     private static void setPathToDataBase(String pathToBackupFile, String dirToPlaceDataBase) {
-        DataBase.setPathToDataBase(getPathToDataBase(pathToBackupFile, dirToPlaceDataBase));
+        DataBase.openTable(getPathToDataBase(pathToBackupFile, dirToPlaceDataBase));
     }
 
     private static String getPathToDataBase(String pathToBackupFile, String dirToPlaceDataBase) {
@@ -33,4 +34,5 @@ public class Importer {
         ArchiveUtil.unzipDirectory(pathToBackupFile, getPathToDataBase(pathToBackupFile, dirToPlaceDataBase));
         setPathToDataBase(pathToBackupFile, dirToPlaceDataBase);
     }
+
 }

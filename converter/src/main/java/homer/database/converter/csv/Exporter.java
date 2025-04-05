@@ -1,7 +1,6 @@
 package homer.database.converter.csv;
 
 import homer.database.converter.DataBaseReader;
-
 import javax.naming.NameNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Exporter {
+
     public static final String CSV_LINE_SEPARATOR = ",";
 
     private static String appendExtensionToCsvFilePathIfNotExists(String filePath) {
@@ -21,9 +21,10 @@ public class Exporter {
     }
 
     private static String getPathToCsvExportFile(String dirPathToPutCsvExportFile) {
-        return appendExtensionToCsvFilePathIfNotExists(
-                Paths.get(dirPathToPutCsvExportFile, DataBaseReader.getDataBaseName()).toString()
-        );
+        return appendExtensionToCsvFilePathIfNotExists(Paths.get(
+                dirPathToPutCsvExportFile,
+                DataBaseReader.getDataBaseName()
+        ).toString());
     }
 
     private static void csvWriter(String csvFilePath, String... lines) throws IOException {
@@ -36,9 +37,7 @@ public class Exporter {
 
     public static void toCSV(String dirPathToPutCsvExportFile) throws NameNotFoundException, IOException, KeyException {
         List<String> lines = new ArrayList<>();
-        lines.add(
-                String.join(CSV_LINE_SEPARATOR, DataBaseReader.getHeaders())
-        );
+        lines.add(String.join(CSV_LINE_SEPARATOR, DataBaseReader.getHeaders()));
         lines.addAll(DataBaseReader.getLines(CSV_LINE_SEPARATOR));
         csvWriter(getPathToCsvExportFile(dirPathToPutCsvExportFile), lines.toArray(new String[0]));
     }
@@ -46,4 +45,5 @@ public class Exporter {
     public static void toCSV() throws NameNotFoundException, IOException, KeyException {
         toCSV(DataBaseReader.getPathToParentDirOfDataBase());
     }
+
 }

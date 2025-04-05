@@ -2,7 +2,7 @@ package homer.database.converter;
 
 import homer.database.backend.DataBase;
 import homer.database.backend.engine.FileProcessor;
-import homer.database.backend.engine.columns.helpers.RecordUniqueID;
+import homer.database.backend.engine.columns.base.RecordUniqueID;
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataBaseReader {
+
     public static String getDataBaseName() {
         Path dataBaseFolder = Paths.get(FileProcessor.pathToDataBaseRootDir);
         return dataBaseFolder.getFileName().toString();
@@ -39,10 +40,11 @@ public class DataBaseReader {
         for (RecordUniqueID lineID : DataBase.getAllRecordsIds()) {
             List<String> line = new ArrayList<>();
             for (String columnName : DataBase.getColumnNames()) {
-                line.add(DataBase.readValue(columnName, lineID).toString());
+                line.add(DataBase.readValue(columnName, lineID).toDatBase());
             }
             lines.add(String.join(sep, line));
         }
         return lines;
     }
+
 }

@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'homer.database'
-version '1.0'
+version 'beta-1.2.0'
 
 repositories {
     mavenCentral()
@@ -35,7 +35,8 @@ shadowJar {
         )
     }
     dependencies {
-        exclude(dependency(':HomerDataBase-backend-1.1.3-WithDependencies'))
+        exclude(dependency(':HomerDataBase-1.0.0-backend'))
+        exclude(dependency('homer.database:backend:beta-1.2.0'))
     }
 }
 

@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 public class Exporter {
+
     private static String getPathToBackupFile(String dirPathToPutBackupFile) {
-        return BackupExtension.HDBB.appendExtensionToBackupFilePathIfNotExists(
-                Paths.get(dirPathToPutBackupFile, DataBaseReader.getDataBaseName()).toString()
-        );
+        return BackupExtension.HDBB.appendExtensionToBackupFilePathIfNotExists(Paths.get(
+                dirPathToPutBackupFile,
+                DataBaseReader.getDataBaseName()
+        ).toString());
     }
 
     public static void toBackupFile(String dirPathToPutBackupFile) throws IOException {
@@ -18,4 +20,5 @@ public class Exporter {
     public static void toBackupFile() throws IOException {
         toBackupFile(DataBaseReader.getPathToParentDirOfDataBase());
     }
+
 }
