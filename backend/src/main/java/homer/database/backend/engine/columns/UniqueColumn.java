@@ -18,7 +18,7 @@ public class UniqueColumn<DT extends DataType<?>> extends SimpleColumn<DT> {
 
     public UniqueColumn(String columnName, Class<DT> dataTypeClass) {
         super(columnName, false, dataTypeClass);
-        idsHashTableFile = new FileProcessor("Ids", pathToColumnDirFromDBRoot);
+        idsHashTableFile = new FileProcessor(columnDir.getFromRootDir(), "Ids");
     }
 
     public Set<DT> getAllValues() throws IOException {

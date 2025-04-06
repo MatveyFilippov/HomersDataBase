@@ -18,14 +18,25 @@ public class FileProcessor {
 
     }
 
-    public static String pathToDataBaseRootDir;
+    private static Path pathToDataBaseRootDir;
     private Path filePath;
+
+    public static void set(Path pathToDataBaseRootDir) {
+        FileProcessor.pathToDataBaseRootDir = pathToDataBaseRootDir.toAbsolutePath();
+    }
+
+    public static void unset() {
+        FileProcessor.pathToDataBaseRootDir = null;
+    }
+
+    public static Path getPathToDataBaseRootDir() {
+        return pathToDataBaseRootDir;
+    }
 
     private static void makeDirs(Path dirs) throws IOException {
         try {
             Files.createDirectories(dirs);
-        } catch (FileAlreadyExistsException ignored) {
-        }
+        } catch (FileAlreadyExistsException ignored) {}
     }
 
     private static void deleteFileOrDir(File obj) {
@@ -49,49 +60,52 @@ public class FileProcessor {
         }
     }
 
-    public static void deleteDir(String dirPath) {
+    public static void cleanDir(Path dirPath) {
+        if (dirPath != null) {
+            cleanDir(dirPath.toAbsolutePath().toFile());
+        }
+    }
+
+    public static void deleteDir(Path dirPath) {
         if (dirPath != null) {
             cleanDir(dirPath);
-            deleteFileOrDir(new File(dirPath));
+            deleteFileOrDir(dirPath.toAbsolutePath().toFile());
         }
     }
 
-    public static void cleanDir(String dirPath) {
-        if (dirPath != null) {
-            cleanDir(new File(dirPath));
-        }
+    public static Path toAbsolutePathFromRoot(String path) {
+        return Paths.get(pathToDataBaseRootDir.toString(), path).toAbsolutePath();
     }
 
-    public static String join(String... members) {
+    public static Path toAbsolutePath(String path) {
+        return Paths.get(path).toAbsolutePath();
+    }
+
+    public static Path toAbsolutePath(String... members) {
         String first = members[0];
         String[] more = new String[members.length - 1];
         System.arraycopy(members, 1, more, 0, members.length - 1);
-        return Paths.get(first, more).toString();
+        return Paths.get(first, more).toAbsolutePath();
     }
 
-    public FileProcessor(String fileName, String... parentFoldersFromRootDit) {
+    public FileProcessor(String... pathsFromRootDit) {
         if (pathToDataBaseRootDir == null) {
             throw new RuntimeException("Path to DataBase root dir must be set");
         }
-        Path tempFilePath = Paths.get(pathToDataBaseRootDir);
-        for (String nextFolder : parentFoldersFromRootDit) {
-            tempFilePath = Paths.get(String.valueOf(tempFilePath), nextFolder);
-        }
-        tempFilePath = Paths.get(String.valueOf(tempFilePath), fileName);
-        filePath = tempFilePath;
-    }
-
-    public static String getAbsolute(String path) {
-        return Paths.get(path).toAbsolutePath().toString();
+        filePath = Paths.get(pathToDataBaseRootDir.toString(), pathsFromRootDit).toAbsolutePath();
     }
 
     public RandomAccessFile getRandomAccessFile() throws IOException {
         makeDirs(filePath.getParent());
-        return new RandomAccessFile(filePath.toString(), "rw");
+        return new RandomAccessFile(filePath.toFile(), "rw");
     }
 
-    public String getPathToFile() {
-        return filePath.toAbsolutePath().toString();
+    public Path getPathToFile() {
+        return filePath;
+    }
+
+    public String getFromRootDir() {
+        return filePath.toString().replace(pathToDataBaseRootDir.toString(), "");
     }
 
     public void appendExtensionIfNotExists(String fileExtension) {
@@ -99,7 +113,7 @@ public class FileProcessor {
             fileExtension = "." + fileExtension;
         }
         if (!filePath.toString().endsWith(fileExtension)) {
-            filePath = Paths.get(filePath + fileExtension);
+            filePath = Paths.get(filePath + fileExtension).toAbsolutePath();
         }
     }
 

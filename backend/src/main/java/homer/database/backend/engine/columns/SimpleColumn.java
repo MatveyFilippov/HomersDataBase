@@ -14,15 +14,15 @@ public class SimpleColumn<DT extends DataType<?>> implements Column<DT> {
     protected final String columnName;
     protected final boolean isNullValuesPossible;
     protected final Class<DT> columnDataTypeClass;
+    protected final FileProcessor columnDir;
     protected final FileProcessor valuesHashTableFile;
-    protected final String pathToColumnDirFromDBRoot;
     protected final DataType<?> dataTypeNullInstance;
 
     public SimpleColumn(String name, boolean canBeNull, Class<DT> dataTypeClass) {
-        this.pathToColumnDirFromDBRoot = FileProcessor.join(
+        this.columnDir = new FileProcessor(
                 FileProcessor.Constants.HDBC_FOLDER_NAME, name.replace(" ", "_")
         );
-        this.valuesHashTableFile = new FileProcessor("Values", pathToColumnDirFromDBRoot);
+        this.valuesHashTableFile = new FileProcessor(columnDir.getFromRootDir(), "Values");
         this.columnName = name;
         this.isNullValuesPossible = canBeNull;
         this.columnDataTypeClass = dataTypeClass;
@@ -82,7 +82,7 @@ public class SimpleColumn<DT extends DataType<?>> implements Column<DT> {
 
     @Override
     public void deleteColumn() {
-        FileProcessor.deleteDir(FileProcessor.join(FileProcessor.pathToDataBaseRootDir, pathToColumnDirFromDBRoot));
+        columnDir.deleteFile();
     }
 
     @Override

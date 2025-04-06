@@ -10,11 +10,11 @@ import java.util.List;
 
 class ColumnParamsHashTable {
 
-    private static final FileProcessor primaryColumn = new FileProcessor("PrimaryColumn", FileProcessor.Constants.HDBT_FOLDER_NAME);
-    private static final FileProcessor names = new FileProcessor("ColumnNames", FileProcessor.Constants.HDBT_FOLDER_NAME);
-    private static final FileProcessor dataTypes = new FileProcessor("ColumnDataTypes", FileProcessor.Constants.HDBT_FOLDER_NAME);
-    private static final FileProcessor columnsWithUniqueValues = new FileProcessor("ColumnsWithUniqueValues", FileProcessor.Constants.HDBT_FOLDER_NAME);
-    private static final FileProcessor columnsWithNullValues = new FileProcessor("ColumnsWithNullValues", FileProcessor.Constants.HDBT_FOLDER_NAME);
+    private static final FileProcessor primaryColumn = new FileProcessor(FileProcessor.Constants.HDBT_FOLDER_NAME, "PrimaryColumn");
+    private static final FileProcessor names = new FileProcessor(FileProcessor.Constants.HDBT_FOLDER_NAME, "ColumnNames");
+    private static final FileProcessor dataTypes = new FileProcessor(FileProcessor.Constants.HDBT_FOLDER_NAME, "ColumnDataTypes");
+    private static final FileProcessor columnsWithUniqueValues = new FileProcessor(FileProcessor.Constants.HDBT_FOLDER_NAME, "ColumnsWithUniqueValues");
+    private static final FileProcessor columnsWithNullValues = new FileProcessor(FileProcessor.Constants.HDBT_FOLDER_NAME, "ColumnsWithNullValues");
     public final String columnName;
 
     public static boolean isColumnNameUsed(String columnName) throws IOException {

@@ -13,6 +13,7 @@ import homer.database.backend.engine.datatypes.implementations.StringType;
 import homer.database.backend.engine.datatypes.implementations.TimeType;
 import javax.naming.NameNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.security.KeyException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +31,12 @@ public class DataBase {
         Parser.registerDataTypeClass(dataType);
     }
 
+    public static void openTable(Path pathToTable) {
+        FileProcessor.set(pathToTable);
+    }
+
     public static void openTable(String... pathsToTable) {
-        FileProcessor.pathToDataBaseRootDir = FileProcessor.getAbsolute(FileProcessor.join(pathsToTable));
+        FileProcessor.set(FileProcessor.toAbsolutePath(pathsToTable));
     }
 
     public static void createTable(String primaryColumnName, Class<? extends DataType<?>> primaryColumnDataType) throws IOException {
@@ -39,19 +44,13 @@ public class DataBase {
     }
 
     public static void deleteTable() {
-        FileProcessor.deleteDir(FileProcessor.pathToDataBaseRootDir);
-        FileProcessor.pathToDataBaseRootDir = null;
+        FileProcessor.deleteDir(FileProcessor.getPathToDataBaseRootDir());
+        FileProcessor.unset();
     }
 
     public static void cleanTable() {
-        FileProcessor.cleanDir(FileProcessor.join(
-                FileProcessor.pathToDataBaseRootDir,
-                FileProcessor.Constants.HDBC_FOLDER_NAME
-        ));
-        FileProcessor.cleanDir(FileProcessor.join(
-                FileProcessor.pathToDataBaseRootDir,
-                FileProcessor.Constants.HDBT_FOLDER_NAME
-        ));
+        FileProcessor.cleanDir(FileProcessor.toAbsolutePathFromRoot(FileProcessor.Constants.HDBC_FOLDER_NAME));
+        FileProcessor.cleanDir(FileProcessor.toAbsolutePathFromRoot(FileProcessor.Constants.HDBT_FOLDER_NAME));
     }
 
     public static void createColumn(String columnName, Class<? extends DataType<?>> columnDataType, boolean isUnique, boolean isNullPossible) throws IOException {
