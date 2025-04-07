@@ -22,15 +22,13 @@ class ColumnParamsHashTable {
 
     public static ColumnParamsHashTable[] getAllColumns() {
         try (HashDict namesDict = new HashDict(names)) {
-            return namesDict.getAllKeys().stream().map(
-                    key -> {
-                        try {
-                            return new ColumnParamsHashTable(key);
-                        } catch (ColumnExistenceException ignored) {
-                            return null;
-                        }
-                    }
-            ).filter(Objects::nonNull).toArray(ColumnParamsHashTable[]::new);
+            return namesDict.getAllKeys().stream().map(key -> {
+                try {
+                    return new ColumnParamsHashTable(key);
+                } catch (ColumnExistenceException ignored) {
+                    return null;
+                }
+            }).filter(Objects::nonNull).toArray(ColumnParamsHashTable[]::new);
         }
     }
 

@@ -20,9 +20,7 @@ public class SimpleColumn<DT extends DataType<?>> implements Column<DT> {
     protected final DataType<?> dataTypeNullInstance;
 
     public SimpleColumn(String name, boolean canBeNull, Class<DT> dataTypeClass) {
-        this.columnDir = new FileProcessor(
-                FileProcessor.Constants.HDBC_FOLDER_NAME, name.replace(" ", "_")
-        );
+        this.columnDir = new FileProcessor(FileProcessor.Constants.HDBC_FOLDER_NAME, name.replace(" ", "_"));
         this.valuesHashTableFile = new FileProcessor(columnDir.getFromRootDir(), "Values");
         this.columnName = name;
         this.isNullValuesPossible = canBeNull;

@@ -2,9 +2,9 @@ package homer.database.backend;
 
 import homer.database.backend.engine.FileProcessor;
 import homer.database.backend.engine.columns.Column;
+import homer.database.backend.engine.columns.RecordUniqueID;
 import homer.database.backend.engine.columns.base.implementations.UniqueColumn;
 import homer.database.backend.engine.columns.base.processor.ColumnsProcessor;
-import homer.database.backend.engine.columns.RecordUniqueID;
 import homer.database.backend.engine.datatypes.DataType;
 import homer.database.backend.engine.datatypes.base.Parser;
 import homer.database.backend.engine.datatypes.base.implementations.BoolType;
@@ -41,6 +41,10 @@ public class DataBase {
 
     public static void close() {
         FileProcessor.unset();
+    }
+
+    public static Path getOpened() {
+        return FileProcessor.getPathToDataBaseRootDir();
     }
 
     public static void createTable(String primaryColumnName, Class<? extends DataType<?>> primaryColumnDataType) {
