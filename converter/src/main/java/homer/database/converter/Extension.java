@@ -1,8 +1,9 @@
-package homer.database.converter.backup;
+package homer.database.converter;
 
-enum BackupExtension {
+public enum Extension {
 
-    HDBB;
+    CSV,
+    HDBB;  // HomerDataBaseBackup
 
     @Override
     public String toString() {
@@ -13,14 +14,14 @@ enum BackupExtension {
         return filePath.endsWith(this.toString());
     }
 
-    public String appendExtensionToBackupFilePathIfNotExists(String filePath) {
+    public String appendToFilePath(String filePath) {
         if (!isFilePathEndsWithExtension(filePath)) {
             filePath += this.toString();
         }
         return filePath;
     }
 
-    public String removeExtensionFromBackupFilePathIfExists(String filePath) {
+    public String removeFromFilePath(String filePath) {
         if (isFilePathEndsWithExtension(filePath)) {
             filePath = filePath.replace(this.toString(), "");
         }

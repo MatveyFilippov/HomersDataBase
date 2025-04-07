@@ -1,18 +1,17 @@
 package homer.database.converter;
 
 import homer.database.backend.DataBase;
-import homer.database.backend.engine.columns.base.RecordUniqueID;
-import homer.database.backend.engine.datatypes.implementations.BoolType;
-import homer.database.backend.engine.datatypes.implementations.NumberType;
-import homer.database.backend.engine.datatypes.implementations.StringType;
-import javax.naming.NameNotFoundException;
+import homer.database.backend.engine.columns.RecordUniqueID;
+import homer.database.backend.engine.datatypes.base.implementations.BoolType;
+import homer.database.backend.engine.datatypes.base.implementations.NumberType;
+import homer.database.backend.engine.datatypes.base.implementations.StringType;
+import java.io.File;
 import java.io.IOException;
-import java.security.KeyException;
 
 class UsageExample {
 
-    public static void main(String[] args) throws IOException, NameNotFoundException, KeyException {
-        DataBase.openTable("DataBaseToExportExample");
+    public static void main(String[] args) throws IOException {
+        DataBase.open("DataBaseToExportExample");
         DataBase.cleanTable();
 
         DataBase.createTable("ID", NumberType.class);
@@ -28,17 +27,17 @@ class UsageExample {
         DataBase.writeValue("Name", DataBase.createNewLine(id2), new StringType("Anonymous"));
 
         homer.database.converter.csv.Exporter.toCSV();
-        homer.database.converter.backup.Exporter.toBackupFile();
+        File backup = homer.database.converter.backup.Exporter.toBackup();
 
         DataBase.deleteTable();
 
-        homer.database.converter.backup.Importer.fromBackupFile("DataBaseToExportExample.HDBB", "");
+        homer.database.converter.backup.Importer.fromBackup(backup);
 
         for (String columnName : DataBase.getColumnNames()) {
             System.out.print(DataBase.getColumnHeader(columnName) + "\t");
         }
         System.out.println();
-        for (RecordUniqueID lineID : DataBase.getAllRecordsIds()) {
+        for (RecordUniqueID lineID : DataBase.getAllRecordIDs()) {
             for (String columnName : DataBase.getColumnNames()) {
                 System.out.print(DataBase.readValue(columnName, lineID) + "\t");
             }

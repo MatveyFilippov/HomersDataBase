@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -24,11 +23,10 @@ class ArchiveUtil {
         }
     }
 
-    public static void zipDirectory(String sourceDir, String zipFilePath) throws IOException {
-        Path sourcePath = Paths.get(sourceDir);
-        try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(Paths.get(zipFilePath)))) {
-            try (Stream<Path> walker = Files.walk(sourcePath).filter(path -> !Files.isDirectory(path))) {
-                walker.forEach(path -> zipTaskForEachFile(zos, sourcePath, path));
+    public static void zipDirectory(Path sourceDir, Path zipFile) throws IOException {
+        try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(zipFile))) {
+            try (Stream<Path> walker = Files.walk(sourceDir).filter(path -> !Files.isDirectory(path))) {
+                walker.forEach(path -> zipTaskForEachFile(zos, sourceDir, path));
             }
         }
     }
@@ -53,14 +51,14 @@ class ArchiveUtil {
         }
     }
 
-    public static void unzipDirectory(String zipFilePath, String destDir) throws IOException {
-        File destDirectory = new File(destDir);
-        mkdirs(destDirectory);
+    public static void unzipDirectory(Path zipFile, Path destDir) throws IOException {
+        File destDirFile = destDir.toFile();
+        mkdirs(destDirFile);
 
-        try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(Paths.get(zipFilePath)))) {
+        try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(zipFile))) {
             ZipEntry zipEntry;
             while ((zipEntry = zis.getNextEntry()) != null) {
-                File newFile = new File(destDirectory, zipEntry.getName());
+                File newFile = new File(destDirFile, zipEntry.getName());
                 if (!zipEntry.isDirectory()) {
                     mkParentDirs(newFile);
                     unzipTaskForEachFile(zis, newFile);

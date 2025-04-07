@@ -1,24 +1,30 @@
 package homer.database.converter.backup;
 
+import homer.database.converter.Extension;
 import homer.database.converter.DataBaseReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 
 public class Exporter {
 
-    private static String getPathToBackupFile(String dirPathToPutBackupFile) {
-        return BackupExtension.HDBB.appendExtensionToBackupFilePathIfNotExists(Paths.get(
-                dirPathToPutBackupFile,
-                DataBaseReader.getDataBaseName()
-        ).toString());
+    private static File getBackupExportFile(File file) {
+        file = file.getAbsoluteFile();
+        String filePath = file.getAbsolutePath();
+        if (file.isFile()) {
+            return filePath.endsWith(Extension.HDBB.toString()) ? file : new File(Extension.CSV.appendToFilePath(filePath));
+        }
+        return new File(Extension.HDBB.appendToFilePath(Paths.get(filePath, DataBaseReader.getDataBaseName()).toString()));
     }
 
-    public static void toBackupFile(String dirPathToPutBackupFile) throws IOException {
-        ArchiveUtil.zipDirectory(DataBaseReader.getPathToDataBase(), getPathToBackupFile(dirPathToPutBackupFile));
+    public static File toBackup(File exportFileOrFolder) throws IOException {
+        File backupExportFile = getBackupExportFile(exportFileOrFolder);
+        ArchiveUtil.zipDirectory(DataBaseReader.getPathToDataBase(), backupExportFile.toPath());
+        return backupExportFile;
     }
 
-    public static void toBackupFile() throws IOException {
-        toBackupFile(DataBaseReader.getPathToParentDirOfDataBase());
+    public static File toBackup() throws IOException {
+        return toBackup(DataBaseReader.getPathToDataBase().getParent().toFile());
     }
 
 }

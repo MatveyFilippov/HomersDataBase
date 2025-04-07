@@ -1,38 +1,40 @@
 package homer.database.converter.backup;
 
 import homer.database.backend.DataBase;
+import homer.database.converter.Extension;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Importer {
 
     private static void raiseErrorIfInvalidBackupFile(String pathToBackupFile) throws IOException {
-        if (!BackupExtension.HDBB.isFilePathEndsWithExtension(pathToBackupFile)) {
-            throw new IOException("Invalid backup file, it must ends with: " + BackupExtension.HDBB);
+        if (!Extension.HDBB.isFilePathEndsWithExtension(pathToBackupFile)) {
+            throw new IOException("Invalid backup file, it must ends with: " + Extension.HDBB);
         }
         if (!new File(pathToBackupFile).exists()) {
             throw new IOException("Backup file not exists");
         }
     }
 
-    private static String getDataBaseName(String pathToBackupFile) {
-        String fileName = Paths.get(pathToBackupFile).getFileName().toString();
-        return BackupExtension.HDBB.removeExtensionFromBackupFilePathIfExists(fileName);
+    private static String getDataBaseName(File backup) {
+        return Extension.HDBB.removeFromFilePath(backup.getName());
     }
 
-    private static void setPathToDataBase(String pathToBackupFile, String dirToPlaceDataBase) {
-        DataBase.openTable(getPathToDataBase(pathToBackupFile, dirToPlaceDataBase));
+    private static Path getPathToDataBase(File backup, Path dirToPlaceDataBase) {
+        return Paths.get(dirToPlaceDataBase.toAbsolutePath().toString(), getDataBaseName(backup));
     }
 
-    private static String getPathToDataBase(String pathToBackupFile, String dirToPlaceDataBase) {
-        return Paths.get(dirToPlaceDataBase, getDataBaseName(pathToBackupFile)).toString();
+    public static void fromBackup(File backup, Path dirToPlaceDataBase) throws IOException {
+        raiseErrorIfInvalidBackupFile(backup.getAbsolutePath());
+        Path pathToDataBase = getPathToDataBase(backup, dirToPlaceDataBase);
+        ArchiveUtil.unzipDirectory(backup.toPath(), pathToDataBase);
+        DataBase.open(pathToDataBase);
     }
 
-    public static void fromBackupFile(String pathToBackupFile, String dirToPlaceDataBase) throws IOException {
-        raiseErrorIfInvalidBackupFile(pathToBackupFile);
-        ArchiveUtil.unzipDirectory(pathToBackupFile, getPathToDataBase(pathToBackupFile, dirToPlaceDataBase));
-        setPathToDataBase(pathToBackupFile, dirToPlaceDataBase);
+    public static void fromBackup(File backup) throws IOException {
+        fromBackup(backup, backup.toPath().getParent());
     }
 
 }

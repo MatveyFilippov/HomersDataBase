@@ -1,33 +1,24 @@
 package homer.database.converter;
 
 import homer.database.backend.DataBase;
-import homer.database.backend.engine.FileProcessor;
-import homer.database.backend.engine.columns.base.RecordUniqueID;
-import javax.naming.NameNotFoundException;
-import java.io.IOException;
+import homer.database.backend.engine.columns.RecordUniqueID;
+import homer.database.backend.engine.exceptions.catchable.ColumnExistenceException;
+import homer.database.backend.engine.exceptions.catchable.ReadWriteValueException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.KeyException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DataBaseReader {
 
     public static String getDataBaseName() {
-        Path dataBaseFolder = Paths.get(FileProcessor.pathToDataBaseRootDir);
-        return dataBaseFolder.getFileName().toString();
+        return DataBase.getOpened().getFileName().toString();
     }
 
-    public static String getPathToDataBase() {
-        return FileProcessor.pathToDataBaseRootDir;
+    public static Path getPathToDataBase() {
+        return DataBase.getOpened();
     }
 
-    public static String getPathToParentDirOfDataBase() {
-        Path parentDir = Paths.get(DataBaseReader.getPathToDataBase()).toAbsolutePath().getParent();
-        return parentDir == null ? "" : parentDir.toString();
-    }
-
-    public static List<String> getHeaders() throws IOException, NameNotFoundException {
+    public static List<String> getHeaders() throws ColumnExistenceException {
         List<String> headers = new ArrayList<>();
         for (String columnName : DataBase.getColumnNames()) {
             headers.add(DataBase.getColumnHeader(columnName));
@@ -35,14 +26,15 @@ public class DataBaseReader {
         return headers;
     }
 
-    public static List<String> getLines(String sep) throws NameNotFoundException, IOException, KeyException {
-        List<String> lines = new ArrayList<>();
-        for (RecordUniqueID lineID : DataBase.getAllRecordsIds()) {
+    public static List<List<String>> getLines() throws ColumnExistenceException, ReadWriteValueException {
+        List<List<String>> lines = new ArrayList<>();
+        String[] columnNames = DataBase.getColumnNames();
+        for (RecordUniqueID lineID : DataBase.getAllRecordIDs()) {
             List<String> line = new ArrayList<>();
-            for (String columnName : DataBase.getColumnNames()) {
+            for (String columnName : columnNames) {
                 line.add(DataBase.readValue(columnName, lineID).toDatBase());
             }
-            lines.add(String.join(sep, line));
+            lines.add(line);
         }
         return lines;
     }
