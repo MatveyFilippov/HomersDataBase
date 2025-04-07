@@ -27,7 +27,7 @@ dependencies {
 
 shadowJar {
     archiveBaseName.set('HomerDataBase')
-    archiveClassifier.set('convertor')
+    archiveClassifier.set('converter')
     manifest {
         attributes(
                 'Implementation-Title': project.name,
@@ -44,7 +44,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            artifactId = 'convertor'
+            artifactId = 'converter'
         }
     }
     repositories {
