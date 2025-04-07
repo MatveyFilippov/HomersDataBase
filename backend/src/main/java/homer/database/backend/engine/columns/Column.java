@@ -1,21 +1,21 @@
 package homer.database.backend.engine.columns;
 
-import homer.database.backend.engine.columns.base.RecordUniqueID;
 import homer.database.backend.engine.datatypes.DataType;
-import java.io.IOException;
-import java.util.List;
+import homer.database.backend.engine.exceptions.catchable.ReadWriteValueException;
 
 public interface Column<DT extends DataType<?>> {
 
-    void writeValue(RecordUniqueID recordUniqueID, DT value) throws IOException;
+    void writeValue(RecordUniqueID recordUniqueID, DT value) throws ReadWriteValueException;
 
-    DT readValue(RecordUniqueID recordUniqueID) throws IOException;
+    DT readValue(RecordUniqueID recordUniqueID) throws ReadWriteValueException;
 
-    void deleteValue(RecordUniqueID recordUniqueID) throws IOException;
+    RecordUniqueID[] find(DT value) throws ReadWriteValueException;
 
-    List<RecordUniqueID> getRecordsUniqueID(DT value) throws IOException;
+    RecordUniqueID[] getRecordUniqueIDs() throws ReadWriteValueException;
 
-    void cleanColumn() throws IOException;
+    void deleteValue(RecordUniqueID recordUniqueID);
+
+    void cleanColumn();
 
     void deleteColumn();
 

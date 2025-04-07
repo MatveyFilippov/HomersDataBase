@@ -1,5 +1,6 @@
 package homer.database.backend.engine;
 
+import homer.database.backend.engine.exceptions.HomerDataBaseUncheckedException;
 import com.google.common.hash.Hashing;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -13,11 +14,15 @@ public class HashDict implements AutoCloseable {
     public final int DICT_SIZE = 1024;  // Number of cells in dict
     private final RandomAccessFile fileHashDict;
 
-    public HashDict(FileProcessor hashDictFile) throws IOException {
+    public HashDict(FileProcessor hashDictFile) {
         hashDictFile.appendExtensionIfNotExists(FileProcessor.Constants.HASH_DICT_FILE_EXTENSION);
         this.fileHashDict = hashDictFile.getRandomAccessFile();
-        if (fileHashDict.length() == 0) {
-            cleanDict();
+        try {
+            if (fileHashDict.length() == 0) {
+                cleanDict();
+            }
+        } catch (IOException ex) {
+            throw new HomerDataBaseUncheckedException("Can't work with HomerHashDict file", ex);
         }
     }
 
@@ -26,25 +31,37 @@ public class HashDict implements AutoCloseable {
         return Math.abs(hash % DICT_SIZE) * BUCKET_SIZE;
     }
 
-    private void cleanCell(long position) throws IOException {
-        fileHashDict.seek(position);
-        for (int i = 0; i < BUCKET_SIZE; i++) {
-            fileHashDict.writeByte(0);
+    private void cleanCell(long position) {
+        try {
+            fileHashDict.seek(position);
+            for (int i = 0; i < BUCKET_SIZE; i++) {
+                fileHashDict.writeByte(0);
+            }
+        } catch (IOException ex) {
+            throw new HomerDataBaseUncheckedException("Can't work with HomerHashDict file", ex);
         }
     }
 
-    private void writeKeyValue(long position, byte[] key, byte[] value) throws IOException {
-        fileHashDict.seek(position);
-        fileHashDict.write(key);
-        fileHashDict.writeByte(0);
-        fileHashDict.write(value);
+    private void writeKeyValue(long position, byte[] key, byte[] value) {
+        try {
+            fileHashDict.seek(position);
+            fileHashDict.write(key);
+            fileHashDict.writeByte(0);
+            fileHashDict.write(value);
+        } catch (IOException ex) {
+            throw new HomerDataBaseUncheckedException("Can't work with HomerHashDict file", ex);
+        }
     }
 
-    private String[] getKeyValue(long position) throws IOException {
-        fileHashDict.seek(position);
-
+    private String[] getKeyValue(long position) {
         byte[] buffer = new byte[BUCKET_SIZE];
-        fileHashDict.read(buffer);
+
+        try {
+            fileHashDict.seek(position);
+            fileHashDict.read(buffer);
+        } catch (IOException ex) {
+            throw new HomerDataBaseUncheckedException("Can't work with HomerHashDict file", ex);
+        }
 
         String data = new String(buffer, StandardCharsets.UTF_8).trim();
         String[] parts = data.split("\0", 2);
@@ -56,9 +73,9 @@ public class HashDict implements AutoCloseable {
         }
     }
 
-    public void put(String key, String value) throws IOException {
+    public void put(String key, String value) {
         if (key.length() > 128 || value.length() > 128) {
-            throw new IllegalArgumentException("Key or value is too long (max 128 chars)");
+            throw new HomerDataBaseUncheckedException("Key or value is too long (max 128 chars)");
         }
         long position = getPosition(key);
 
@@ -66,7 +83,7 @@ public class HashDict implements AutoCloseable {
         writeKeyValue(position, key.getBytes(StandardCharsets.UTF_8), value.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String get(String key, String defaultValueIfNotExists) throws IOException {
+    public String get(String key, String defaultValueIfNotExists) {
         String[] parts = getKeyValue(getPosition(key));
 
         if (parts[0] != null && parts[0].equals(key)) {
@@ -76,14 +93,13 @@ public class HashDict implements AutoCloseable {
         }
     }
 
-    public boolean isKeyExists(String key) throws IOException {
+    public boolean isKeyExists(String key) {
         String[] parts = getKeyValue(getPosition(key));
         return parts[0] != null && parts[0].equals(key);
     }
 
-    public List<String> findKeysByValue(String value) throws IOException {
+    public List<String> findKeysByValue(String value) {
         List<String> keys = new ArrayList<>();
-
         for (int i = 0; i < DICT_SIZE; i++) {
             long position = (long) i * BUCKET_SIZE;
             String[] parts = getKeyValue(position);
@@ -94,9 +110,8 @@ public class HashDict implements AutoCloseable {
         return keys;
     }
 
-    public List<String> getAllKeys() throws IOException {
+    public List<String> getAllKeys() {
         List<String> keys = new ArrayList<>();
-
         for (int i = 0; i < DICT_SIZE; i++) {
             long position = (long) i * BUCKET_SIZE;
             String[] parts = getKeyValue(position);
@@ -107,9 +122,8 @@ public class HashDict implements AutoCloseable {
         return keys;
     }
 
-    public List<String> getAllValues() throws IOException {
+    public List<String> getAllValues() {
         List<String> values = new ArrayList<>();
-
         for (int i = 0; i < DICT_SIZE; i++) {
             long position = (long) i * BUCKET_SIZE;
             String[] parts = getKeyValue(position);
@@ -120,21 +134,27 @@ public class HashDict implements AutoCloseable {
         return values;
     }
 
-    public void cleanDict() throws IOException {
-        for (int i = 0; i < DICT_SIZE * BUCKET_SIZE; i++) {
-            fileHashDict.writeByte(0);
+    public void cleanDict() {
+        try {
+            for (int i = 0; i < DICT_SIZE * BUCKET_SIZE; i++) {
+                fileHashDict.writeByte(0);
+            }
+        } catch (IOException ex) {
+            throw new HomerDataBaseUncheckedException("Can't work with HomerHashDict file", ex);
         }
     }
 
     public void remove(String key) {
-        try {
-            cleanCell(getPosition(key));
-        } catch (IOException ignored) {}
+        cleanCell(getPosition(key));
     }
 
     @Override
-    public void close() throws IOException {
-        fileHashDict.close();
+    public void close() {
+        try {
+            fileHashDict.close();
+        } catch (IOException ex) {
+            throw new HomerDataBaseUncheckedException("Can't close HomerHashDict file", ex);
+        }
     }
 
 }

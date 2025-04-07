@@ -1,6 +1,7 @@
-package homer.database.backend.engine.datatypes.implementations;
+package homer.database.backend.engine.datatypes.base.implementations;
 
 import homer.database.backend.engine.datatypes.DataType;
+import homer.database.backend.engine.exceptions.catchable.InvalidValueException;
 
 public class NumberType extends DataType<Double> {
 
@@ -16,8 +17,12 @@ public class NumberType extends DataType<Double> {
     }
 
     @Override
-    protected Double toJavaValue(String value) {
-        return Double.parseDouble(value);
+    protected Double toJavaValue(String value) throws InvalidValueException {
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException ex) {
+            throw new InvalidValueException(NumberType.class, value, "Can't parse number value from '" + value + "'");
+        }
     }
 
     @Override

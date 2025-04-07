@@ -1,6 +1,7 @@
-package homer.database.backend.engine.datatypes.implementations;
+package homer.database.backend.engine.datatypes.base.implementations;
 
 import homer.database.backend.engine.datatypes.DataType;
+import homer.database.backend.engine.exceptions.catchable.InvalidValueException;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -23,7 +24,7 @@ public class TimeType extends DataType<Map<String, Integer>> {
     }
 
     @Override
-    protected Map<String, Integer> toJavaValue(String value) {
+    protected Map<String, Integer> toJavaValue(String value) throws InvalidValueException {
         if (Pattern.matches("^\\d{1,2}:\\d{1,2}$", value)) {
             final String[] splitHourMinute = value.split(":");
             return Map.of(
@@ -31,7 +32,7 @@ public class TimeType extends DataType<Map<String, Integer>> {
                     TimeKeys.MINUTES, Integer.valueOf(splitHourMinute[1])
             );
         }
-        return null;
+        throw new InvalidValueException(TimeType.class, value, "Can't parse time value from '" + value + "'");
     }
 
     @Override

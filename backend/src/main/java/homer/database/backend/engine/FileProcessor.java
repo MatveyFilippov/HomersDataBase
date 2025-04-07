@@ -1,5 +1,6 @@
 package homer.database.backend.engine;
 
+import homer.database.backend.engine.exceptions.HomerDataBaseUncheckedException;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -33,10 +34,12 @@ public class FileProcessor {
         return pathToDataBaseRootDir;
     }
 
-    private static void makeDirs(Path dirs) throws IOException {
+    private static void makeDirs(Path dirs) {
         try {
             Files.createDirectories(dirs);
-        } catch (FileAlreadyExistsException ignored) {}
+        } catch (FileAlreadyExistsException ignored) {} catch (IOException ex) {
+            throw new HomerDataBaseUncheckedException("Can't create dir", ex);
+        }
     }
 
     private static void deleteFileOrDir(File obj) {
@@ -90,14 +93,18 @@ public class FileProcessor {
 
     public FileProcessor(String... pathsFromRootDit) {
         if (pathToDataBaseRootDir == null) {
-            throw new RuntimeException("Path to DataBase root dir must be set");
+            throw new HomerDataBaseUncheckedException("Path to DataBase root dir must be set");
         }
         filePath = Paths.get(pathToDataBaseRootDir.toString(), pathsFromRootDit).toAbsolutePath();
     }
 
-    public RandomAccessFile getRandomAccessFile() throws IOException {
+    public RandomAccessFile getRandomAccessFile() {
         makeDirs(filePath.getParent());
-        return new RandomAccessFile(filePath.toFile(), "rw");
+        try {
+            return new RandomAccessFile(filePath.toFile(), "rw");
+        } catch (IOException ex) {
+            throw new HomerDataBaseUncheckedException("Can't open file", ex);
+        }
     }
 
     public Path getPathToFile() {

@@ -1,40 +1,42 @@
 package homer.database.backend.engine.datatypes;
 
-public abstract class DataType<DT> {
+import homer.database.backend.engine.exceptions.catchable.InvalidValueException;
 
-    private DT value = null;
+public abstract class DataType<VC> {
+
+    Object value = null;
 
     public DataType() {}
 
-    public DataType(DT value) {
+    public DataType(VC value) {
         this.value = value;
     }
 
     public abstract String getDataTypeName();
 
-    protected abstract DT toJavaValue(String value);
+    protected abstract VC toJavaValue(String value) throws InvalidValueException;
 
-    protected abstract String toDataBaseValue(DT value);
-
-    void fromDataBase(String value) {
-        this.value = value == null ? null : toJavaValue(value);
-    }
+    protected abstract String toDataBaseValue(VC value);
 
     public boolean isNull() {
         return value == null;
     }
 
-    public DT toJava() {
-        return isNull() ? null : toJavaValue(value.toString());
+    public VC toJava() {
+        return (VC) value;
     }
 
     public String toDatBase() {
-        return isNull() ? null : toDataBaseValue(value);
+        return isNull() ? null : toDataBaseValue((VC) value);
     }
 
     @Override
     public String toString() {
         return getDataTypeName() + ": '" + toDatBase() + "'";
+    }
+
+    public static <DT extends DataType<?>> void setValueFromDataBase(DT nullDataType, String valueFromDataBase) throws InvalidValueException {
+        nullDataType.value = valueFromDataBase == null ? null : nullDataType.toJavaValue(valueFromDataBase);
     }
 
 }
