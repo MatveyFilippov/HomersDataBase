@@ -93,7 +93,7 @@ public class FileProcessor {
 
     public FileProcessor(String... pathsFromRootDit) {
         if (pathToDataBaseRootDir == null) {
-            throw new HomerDataBaseUncheckedException("Path to DataBase root dir must be set");
+            throw new HomerDataBaseUncheckedException("Path to HomerDataBase root dir must be set");
         }
         filePath = Paths.get(pathToDataBaseRootDir.toString(), pathsFromRootDit).toAbsolutePath();
     }

@@ -18,7 +18,7 @@ import homer.database.backend.engine.exceptions.catchable.ReadWriteValueExceptio
 import java.nio.file.Path;
 import java.util.Arrays;
 
-public class DataBase {
+public class HomerDataBase {
 
     static {
         registerNewDataTypeClass(StringType.class);

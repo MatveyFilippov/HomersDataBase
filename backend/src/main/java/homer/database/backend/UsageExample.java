@@ -8,23 +8,23 @@ import homer.database.backend.engine.exceptions.HomerDataBaseCheckedException;
 class UsageExample {
 
     public static void main(String[] args) throws HomerDataBaseCheckedException {
-        DataBase.open("DataBaseExample");
-        DataBase.cleanTable();
+        HomerDataBase.open("DataBaseExample");
+        HomerDataBase.cleanTable();
 
-        DataBase.createTable("ID", NumberType.class);
-        DataBase.createColumn("Name", StringType.class, false, true);
+        HomerDataBase.createTable("ID", NumberType.class);
+        HomerDataBase.createColumn("Name", StringType.class, false, true);
 
         NumberType id1 = new NumberType(1);
-        RecordUniqueID newLineID = DataBase.createNewLine(id1);
-        DataBase.writeValue("Name", newLineID, new StringType("Homer"));
+        RecordUniqueID newLineID = HomerDataBase.createNewLine(id1);
+        HomerDataBase.writeValue("Name", newLineID, new StringType("Homer"));
 
-        for (String columnName : DataBase.getColumnNames()) {
-            System.out.print(DataBase.getColumnHeader(columnName) + "\t");
+        for (String columnName : HomerDataBase.getColumnNames()) {
+            System.out.print(HomerDataBase.getColumnHeader(columnName) + "\t");
         }
         System.out.println();
-        for (RecordUniqueID lineID : DataBase.getAllRecordIDs()) {
-            for (String columnName : DataBase.getColumnNames()) {
-                System.out.print(DataBase.readValue(columnName, lineID) + "\t");
+        for (RecordUniqueID lineID : HomerDataBase.getAllRecordIDs()) {
+            for (String columnName : HomerDataBase.getColumnNames()) {
+                System.out.print(HomerDataBase.readValue(columnName, lineID) + "\t");
             }
             System.out.println();
         }
