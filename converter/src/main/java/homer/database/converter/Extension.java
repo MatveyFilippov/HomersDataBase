@@ -11,7 +11,7 @@ public enum Extension {
     }
 
     public boolean isFilePathEndsWithExtension(String filePath) {
-        return filePath.endsWith(this.toString());
+        return filePath.toUpperCase().endsWith(this.toString().toUpperCase());
     }
 
     public String appendToFilePath(String filePath) {
