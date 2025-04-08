@@ -7,16 +7,16 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
 
-public class DataBaseApplication extends Application {
+public class HomerDataBaseApplication extends Application {
 
     public static Stage stage;
 
     @Override
     public void start(Stage stage) throws IOException {
-        DataBaseApplication.stage = stage;
+        HomerDataBaseApplication.stage = stage;
         Thread.setDefaultUncaughtExceptionHandler(ErrorHandler::appErrorHandler);
 
-        FXMLLoader fxmlLoader = new FXMLLoader(DataBaseApplication.class.getResource("HomerDataBaseAppView.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(HomerDataBaseApplication.class.getResource("HomerDataBaseAppView.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1024, 720);
         stage.setTitle("HomerDataBase");
         stage.setScene(scene);

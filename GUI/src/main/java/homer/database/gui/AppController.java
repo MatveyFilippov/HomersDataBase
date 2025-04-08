@@ -1,98 +1,81 @@
 package homer.database.gui;
 
-import homer.database.backend.DataBase;
-import homer.database.backend.engine.datatypes.helpers.DataTypes;
-import homer.database.gui.table.TableProcessor;
+import homer.database.backend.HomerDataBase;
+import homer.database.converter.Extension;
+import homer.database.gui.misc.AlertWindow;
+import homer.database.gui.misc.DialogWindow;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.collections.ObservableList;
-import javax.naming.NameNotFoundException;
+import java.io.File;
 import java.io.IOException;
-import java.security.KeyException;
+import java.util.List;
+import java.util.Map;
 
 public class AppController {
-
-    @FXML
-    MenuButton columnsToDelMenuButton;
-
-    @FXML
-    CheckBox isNewColumnNullPossible, isNewColumnUnique;
-
-    @FXML
-    ChoiceBox<DataTypes> newColumnDataTypeChoiceBox;
-
-    @FXML
-    ChoiceBox<String> columnNameToFindChoiceBox;
-
-    @FXML
-    TextField newColumnNameField, valueToFindField;
 
     @FXML
     TableView<ObservableList<String>> table;
 
     @FXML
-    private void initialize() throws NameNotFoundException, IOException {
-        DataBase.setPathToDataBase(AppProperties.PATH_TO_DATA_DIR, AppProperties.DB_NAME);
-        TableProcessor.init(table, newColumnDataTypeChoiceBox, columnsToDelMenuButton, columnNameToFindChoiceBox);
-        resetToDefaultNewColumnCreationLine();
-        setToWaitingNewPrimaryColumnCreationLineIfNecessary();
-    }
-
-    @FXML
-    void createNewColumn() throws NameNotFoundException, IOException {
-        String columnName = newColumnNameField.getText();
-        DataTypes columnDataType = newColumnDataTypeChoiceBox.getValue();
-        boolean isColumnUnique = isNewColumnUnique.isSelected();
-        boolean isColumnNullPossible = isNewColumnNullPossible.isSelected();
-        if (TableProcessor.isNoColumns()) {
-            TableProcessor.createPrimaryColumn(columnName, columnDataType);
-        } else {
-            TableProcessor.createColumn(columnName, columnDataType, isColumnUnique, isColumnNullPossible);
-        }
-        resetToDefaultNewColumnCreationLine();
-        setToWaitingNewPrimaryColumnCreationLineIfNecessary();
-    }
-
-    private void resetToDefaultNewColumnCreationLine() {
-        newColumnNameField.setText("");
-        newColumnDataTypeChoiceBox.setValue(DataTypes.STRING);
-    }
-
-    private void setToWaitingNewPrimaryColumnCreationLineIfNecessary() {
-        boolean isWaitingNewPrimaryColumn = TableProcessor.isNoColumns();
-        isNewColumnUnique.setDisable(isWaitingNewPrimaryColumn);
-        isNewColumnNullPossible.setDisable(isWaitingNewPrimaryColumn);
-        newColumnNameField.setPromptText(
-                isWaitingNewPrimaryColumn ? "PrimaryColumn name" : "New column name"
-        );
-    }
-
-    @FXML
-    void tryToFindValue() throws NameNotFoundException, IOException {
-        TableProcessor.findAllValues(columnNameToFindChoiceBox.getValue(), valueToFindField.getText());
-    }
-
-    @FXML
-    void refreshTable() throws NameNotFoundException, IOException {
-        TableProcessor.refresh();
+    private void initialize() {
+        HomerDataBase.open(AppProperties.PATH_TO_DATABASE);
     }
 
     @FXML
     void exportToBACKUP() throws IOException {
-        homer.database.converter.backup.Exporter.toBackupFile();
+        if (!HomerDataBase.isTableCreated()) {
+            AlertWindow.showError("Can't export HomerDataBse", "Table is clear", true);
+            return;
+        }
+        File exportFile = DialogWindow.fileChooserToSave("Choose file to save export", Map.of(
+                "HomerDataBaseBackup", List.of("*" + Extension.HDBB)
+        ));
+        if (exportFile == null) {
+            AlertWindow.showError("Can't export file", "You don't choose anything", true);
+            return;
+        }
+        homer.database.converter.backup.Exporter.toBackup(exportFile);
+        AlertWindow.showInfo("Success", "HomerDataBase exported to backup file: " + exportFile, false);
     }
 
     @FXML
-    void importFromBACKUP() throws IOException, NameNotFoundException {
-        homer.database.converter.backup.Importer.fromBackupFile(
-                "/Users/matvey/IdeaProjects/HomerDataBase/GUI/HomersDataBaseAppData/AppMainDataBase.HDBB",
-                AppProperties.PATH_TO_DATA_DIR
+    void importFromBACKUP() throws IOException {
+        File exportFile = DialogWindow.fileChooserToOpen("Choose export file", Map.of(
+                "HomerDataBaseBackup", List.of("*" + Extension.HDBB),
+                "All files", List.of("*.*")
+        ));
+        if (exportFile == null) {
+            AlertWindow.showError("Can't open export file", "You don't choose anything", true);
+            return;
+        }
+        boolean isContinueOpening = !HomerDataBase.isTableCreated() || DialogWindow.askBool(
+                "Continue importing", "Stop", "Backup import",
+                "After importing, the previous data will be deleted",
+                "If you want to save your data, export it to backup"
         );
-        TableProcessor.refresh();
+        if (!isContinueOpening) {
+            return;
+        }
+        homer.database.converter.backup.Importer.fromBackup(exportFile, AppProperties.PATH_TO_DATABASE);
+        AlertWindow.showInfo("Success", "HomerDataBase imported from backup file", false);
     }
 
     @FXML
-    void exportToCSV() throws NameNotFoundException, IOException, KeyException {
-        homer.database.converter.csv.Exporter.toCSV();
+    void exportToCSV() throws IOException {
+        if (!HomerDataBase.isTableCreated()) {
+            AlertWindow.showError("Can't export HomerDataBse", "Table is clear", true);
+            return;
+        }
+        File exportFile = DialogWindow.fileChooserToSave("Choose file to save CSV export", Map.of(
+                "CommaSeparatedValues", List.of("*" + Extension.CSV)
+        ));
+        if (exportFile == null) {
+            AlertWindow.showError("Can't export file", "You don't choose anything", true);
+            return;
+        }
+        homer.database.converter.csv.Exporter.toCSV(exportFile);
+        AlertWindow.showInfo("Success", "HomerDataBase exported to csv file: " + exportFile, false);
     }
+
 }

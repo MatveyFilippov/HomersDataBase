@@ -1,6 +1,6 @@
 package homer.database.gui.misc;
 
-import homer.database.gui.DataBaseApplication;
+import homer.database.gui.HomerDataBaseApplication;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.TextInputDialog;
@@ -10,7 +10,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +72,7 @@ public class DialogWindow {
         filters.forEach((description, extensions) -> fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter(description, extensions)
         ));
-        return fileChooser.showOpenDialog(DataBaseApplication.stage);
+        return fileChooser.showOpenDialog(HomerDataBaseApplication.stage);
     }
 
     public static File fileChooserToSave(String title, Map<String, List<String>> filters) {
@@ -82,13 +81,13 @@ public class DialogWindow {
         filters.forEach((description, extensions) -> fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter(description, extensions)
         ));
-        return fileChooser.showSaveDialog(DataBaseApplication.stage);
+        return fileChooser.showSaveDialog(HomerDataBaseApplication.stage);
     }
 
     public static File directoryChooser(String title) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle(title);
-        return directoryChooser.showDialog(DataBaseApplication.stage);
+        return directoryChooser.showDialog(HomerDataBaseApplication.stage);
     }
 
 }

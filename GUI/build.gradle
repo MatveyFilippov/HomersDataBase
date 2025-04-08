@@ -4,7 +4,7 @@ plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.13'
-    id 'org.beryx.jlink' version '2.25.0'
+    id 'org.beryx.jlink' version '3.1.1'
     id 'io.github.fvarrui.javapackager.plugin' version '1.7.6'
 }
 
@@ -16,22 +16,29 @@ repositories {
     flatDir {
         dirs 'libs'
     }
-}
-
-ext {
-    junitVersion = '5.8.2'
+    maven {
+        url uri("${rootDir}/../local-repo")
+    }
 }
 
 sourceCompatibility = '9'
 targetCompatibility = '9'
 
+plugins.withType(JavaPlugin) {
+    sourceCompatibility = '9'
+    targetCompatibility = '9'
+}
+
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+    // options.compilerArgs += ['--module-path', classpath.asPath]
+    sourceCompatibility = '9'
+    targetCompatibility = '9'
 }
 
 application {
     mainModule = 'homer.database.gui'
-    mainClass = 'homer.database.gui.DataBaseApplication'
+    mainClass = 'homer.database.gui.HomerDataBaseApplication'
 }
 
 javafx {
@@ -40,23 +47,30 @@ javafx {
 }
 
 dependencies {
-    implementation 'org.openjfx:javafx:22.0.1'
-    implementation 'org.openjfx:javafx-base:22.0.1'
-    implementation 'org.openjfx:javafx-controls:22.0.1'
-    implementation 'org.openjfx:javafx-fxml:22.0.1'
-    implementation 'org.openjfx:javafx-graphics:22.0.1'
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'org.slf4j:slf4j-jdk14:1.7.36'
+    runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:$javafx.platform.classifier"
 
-    implementation name: 'HomerDataBase-backend-1.1.3-WithDependencies'
-    implementation name: 'HomerDataBase-convertor-1.0-WithDependencies'
-}
-
-test {
-    useJUnitPlatform()
+//    implementation name: 'HomerDataBase-1.0.0-backend'
+//    implementation name: 'HomerDataBase-1.0.0-converter'
+    implementation 'homer.database:backend:beta-1.2.0'
+    implementation 'homer.database:converter:beta-1.2.0'
 }
 
 jlink {
-    imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    forceMerge 'slf4j'
+    mergedModule {
+        requires "java.xml"
+        requires "java.desktop"
+        requires "java.sql"
+    }
+    addExtraDependencies("javafx")
+    imageZip = project.file("${buildDir}/distributions/HomerDataBase-v${version}-${javafx.platform.classifier}.zip")
+    options = [
+            '--strip-debug', '--no-header-files', '--no-man-pages',
+//            '--module-path', "$System.env.PATH_TO_FX_MODS",
+//            '--add-modules', 'javafx.controls,javafx.fxml'
+    ]
     launcher {
         name = 'HomerDataBase'
     }
@@ -69,7 +83,7 @@ jlinkZip {
 task packageToApp(type: PackageTask, dependsOn: build) {
     mainClass = application.mainClass
 
-    outputDirectory = file("${buildDir}/packaged")
+    outputDirectory = file("${buildDir}/distributions")
     setAppName("HomerDataBase")
     displayName = "HomerDataBase"
     organizationName = "Homer"
@@ -83,10 +97,10 @@ task packageToApp(type: PackageTask, dependsOn: build) {
 //        ...
 //    }
     macConfig {
-        icnsFile = file("src/main/resources/homer/database/gui/AppIcon/HomerDataBaseIcon.icns")
+        icnsFile = file("${rootDir}/src/main/resources/homer/database/gui/AppIcon/HomerDataBaseIcon.icns")
     }
     winConfig {
-        icoFile = file("src/main/resources/homer/database/gui/AppIcon/HomerDataBaseIcon.ico")
+        icoFile = file("${rootDir}/src/main/resources/homer/database/gui/AppIcon/HomerDataBaseIcon.ico")
         disableRunAfterInstall = false
         removeOldLibs = true
     }
