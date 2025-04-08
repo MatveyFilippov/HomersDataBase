@@ -18,23 +18,16 @@ public class Importer {
         }
     }
 
-    private static String getDataBaseName(File backup) {
-        return Extension.HDBB.removeFromFilePath(backup.getName());
-    }
-
-    private static Path getPathToDataBase(File backup, Path dirToPlaceDataBase) {
-        return Paths.get(dirToPlaceDataBase.toAbsolutePath().toString(), getDataBaseName(backup));
-    }
-
-    public static void fromBackup(File backup, Path dirToPlaceDataBase) throws IOException {
+    public static void fromBackup(File backup, Path pathToDataBase) throws IOException {
         raiseErrorIfInvalidBackupFile(backup.getAbsolutePath());
-        Path pathToDataBase = getPathToDataBase(backup, dirToPlaceDataBase);
         ArchiveUtil.unzipDirectory(backup.toPath(), pathToDataBase);
         DataBase.open(pathToDataBase);
     }
 
     public static void fromBackup(File backup) throws IOException {
-        fromBackup(backup, backup.toPath().getParent());
+        String nameOfDataBase = Extension.HDBB.removeFromFilePath(backup.getName());
+        Path pathToDataBase = Paths.get(backup.getParent(), nameOfDataBase);
+        fromBackup(backup, pathToDataBase);
     }
 
 }
