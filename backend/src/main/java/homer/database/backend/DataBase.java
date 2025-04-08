@@ -31,6 +31,10 @@ public class DataBase {
         Parser.registerDataTypeClass(dataType);
     }
 
+    public static boolean isOpen() {
+        return FileProcessor.getPathToDataBaseRootDir() != null;
+    }
+
     public static void open(Path pathToTable) {
         FileProcessor.set(pathToTable);
     }
@@ -47,6 +51,10 @@ public class DataBase {
         return FileProcessor.getPathToDataBaseRootDir();
     }
 
+    public static boolean isTableCreated() {
+        return ColumnsProcessor.isPrimaryColumnExists();
+    }
+
     public static void createTable(String primaryColumnName, Class<? extends DataType<?>> primaryColumnDataType) {
         ColumnsProcessor.createPrimaryColumn(primaryColumnName, primaryColumnDataType);
     }
@@ -58,6 +66,10 @@ public class DataBase {
     public static void cleanTable() {
         FileProcessor.cleanDir(FileProcessor.toAbsolutePathFromRoot(FileProcessor.Constants.HDBC_FOLDER_NAME));
         FileProcessor.cleanDir(FileProcessor.toAbsolutePathFromRoot(FileProcessor.Constants.HDBT_FOLDER_NAME));
+    }
+
+    public static boolean isColumnExists(String columnName) {
+        return ColumnsProcessor.isColumnNameUsed(columnName);
     }
 
     public static void createColumn(String columnName, Class<? extends DataType<?>> columnDataType, boolean isUnique, boolean isNullPossible) throws ColumnExistenceException {
@@ -121,6 +133,11 @@ public class DataBase {
     public static <DT extends DataType<?>> DT readValue(String columnName, RecordUniqueID recordUniqueID) throws ColumnExistenceException, ReadWriteValueException {
         Column<DT> column = ColumnsProcessor.getColumn(columnName);
         return column.readValue(recordUniqueID);
+    }
+
+    public static <DT extends DataType<?>> boolean isExists(String columnName, RecordUniqueID recordUniqueID) throws ColumnExistenceException {
+        Column<DT> column = ColumnsProcessor.getColumn(columnName);
+        return column.isExists(recordUniqueID);
     }
 
     public static <DT extends DataType<?>> RecordUniqueID[] findValues(String columnName, DT value) throws ColumnExistenceException, ReadWriteValueException {

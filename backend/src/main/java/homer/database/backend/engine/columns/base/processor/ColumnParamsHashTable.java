@@ -14,9 +14,9 @@ class ColumnParamsHashTable {
     private static final FileProcessor columnsWithNullValues = new FileProcessor(FileProcessor.Constants.HDBT_FOLDER_NAME, "ColumnsWithNullValues");
     public final String columnName;
 
-    public static boolean isColumnNameUsed(String columnName) {
-        try (HashDict namesDict = new HashDict(names)) {
-            return namesDict.isKeyExists(columnName);
+    public static boolean isColumnExists(String columnName) {
+        try (HashDict namesDict = new HashDict(names); HashDict dataTypesDict = new HashDict(dataTypes)) {
+            return namesDict.isKeyExists(columnName) && dataTypesDict.isKeyExists(columnName);
         }
     }
 
@@ -88,14 +88,8 @@ class ColumnParamsHashTable {
         }
     }
 
-    private static boolean isAllColumnParamsExists(String columnName) {
-        try (HashDict namesDict = new HashDict(names); HashDict dataTypesDict = new HashDict(dataTypes)) {
-            return namesDict.isKeyExists(columnName) && dataTypesDict.isKeyExists(columnName);
-        }
-    }
-
     public ColumnParamsHashTable(String columnName) throws ColumnExistenceException {
-        if (!isAllColumnParamsExists(columnName)) {
+        if (!isColumnExists(columnName)) {
             throw new ColumnExistenceException(columnName, false);
         }
         this.columnName = columnName;

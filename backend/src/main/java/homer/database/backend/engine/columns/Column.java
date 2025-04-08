@@ -9,6 +9,8 @@ public interface Column<DT extends DataType<?>> {
 
     DT readValue(RecordUniqueID recordUniqueID) throws ReadWriteValueException;
 
+    boolean isExists(RecordUniqueID recordUniqueID);
+
     RecordUniqueID[] find(DT value) throws ReadWriteValueException;
 
     RecordUniqueID[] getRecordUniqueIDs() throws ReadWriteValueException;

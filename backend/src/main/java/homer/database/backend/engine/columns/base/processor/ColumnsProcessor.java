@@ -11,6 +11,10 @@ import java.util.Arrays;
 
 public class ColumnsProcessor {
 
+    public static boolean isPrimaryColumnExists() {
+        return ColumnParamsHashTable.isPrimaryColumnExists();
+    }
+
     public static void createPrimaryColumn(String name, Class<? extends DataType<?>> dataTypeClass) {
         if (ColumnParamsHashTable.isPrimaryColumnExists()) {
             throw new HomerDataBaseUncheckedException("Primary column already exists");
@@ -19,11 +23,15 @@ public class ColumnsProcessor {
         ColumnParamsHashTable.registerNewPrimaryColumn(name, dataType.getDataTypeName());
     }
 
+    public static boolean isColumnNameUsed(String name) {
+        return ColumnParamsHashTable.isColumnExists(name);
+    }
+
     public static void newColumn(String name, Class<? extends DataType<?>> dataTypeClass, boolean isUnique, boolean isNullPossible) throws ColumnExistenceException {
         if (!ColumnParamsHashTable.isPrimaryColumnExists()) {
             throw new HomerDataBaseUncheckedException("Before creating new column, you must create primary column");
         }
-        if (ColumnParamsHashTable.isColumnNameUsed(name)) {
+        if (ColumnParamsHashTable.isColumnExists(name)) {
             throw new ColumnExistenceException(name, true);
         }
         DataType<?> dataType = Parser.getNullInstance(dataTypeClass);

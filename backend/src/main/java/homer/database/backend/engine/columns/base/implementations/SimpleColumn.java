@@ -56,6 +56,13 @@ public class SimpleColumn<DT extends DataType<?>> implements Column<DT> {
     }
 
     @Override
+    public boolean isExists(RecordUniqueID recordUniqueID) {
+        try (HashDict values = new HashDict(valuesHashTableFile)) {
+            return values.isKeyExists(recordUniqueID.toDatBase());
+        }
+    }
+
+    @Override
     public RecordUniqueID[] getRecordUniqueIDs() throws ReadWriteValueException {
         try (HashDict values = new HashDict(valuesHashTableFile)) {
             List<String> keys = values.getAllKeys();
