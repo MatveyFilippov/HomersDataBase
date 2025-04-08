@@ -1,6 +1,6 @@
 package homer.database.converter.backup;
 
-import homer.database.backend.DataBase;
+import homer.database.backend.HomerDataBase;
 import homer.database.converter.Extension;
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +21,7 @@ public class Importer {
     public static void fromBackup(File backup, Path pathToDataBase) throws IOException {
         raiseErrorIfInvalidBackupFile(backup.getAbsolutePath());
         ArchiveUtil.unzipDirectory(backup.toPath(), pathToDataBase);
-        DataBase.open(pathToDataBase);
+        HomerDataBase.open(pathToDataBase);
     }
 
     public static void fromBackup(File backup) throws IOException {

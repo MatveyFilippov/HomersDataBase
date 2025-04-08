@@ -1,6 +1,6 @@
 package homer.database.converter;
 
-import homer.database.backend.DataBase;
+import homer.database.backend.HomerDataBase;
 import homer.database.backend.engine.columns.RecordUniqueID;
 import homer.database.backend.engine.datatypes.base.implementations.BoolType;
 import homer.database.backend.engine.datatypes.base.implementations.NumberType;
@@ -11,35 +11,35 @@ import java.io.IOException;
 class UsageExample {
 
     public static void main(String[] args) throws IOException {
-        DataBase.open("DataBaseToExportExample");
-        DataBase.cleanTable();
+        HomerDataBase.open("HomerDataBaseToExportExample");
+        HomerDataBase.cleanTable();
 
-        DataBase.createTable("ID", NumberType.class);
-        DataBase.createColumn("Name", StringType.class, false, false);
-        DataBase.createColumn("Male", BoolType.class, false, true);
+        HomerDataBase.createTable("ID", NumberType.class);
+        HomerDataBase.createColumn("Name", StringType.class, false, false);
+        HomerDataBase.createColumn("Male", BoolType.class, false, true);
 
         NumberType id1 = new NumberType(1);
-        RecordUniqueID newLineID = DataBase.createNewLine(id1);
-        DataBase.writeValue("Name", newLineID, new StringType("Homer"));
-        DataBase.writeValue("Male", newLineID, new BoolType(true));
+        RecordUniqueID newLineID = HomerDataBase.createNewLine(id1);
+        HomerDataBase.writeValue("Name", newLineID, new StringType("Homer"));
+        HomerDataBase.writeValue("Male", newLineID, new BoolType(true));
 
         NumberType id2 = new NumberType(2);
-        DataBase.writeValue("Name", DataBase.createNewLine(id2), new StringType("Anonymous"));
+        HomerDataBase.writeValue("Name", HomerDataBase.createNewLine(id2), new StringType("Anonymous"));
 
         homer.database.converter.csv.Exporter.toCSV();
         File backup = homer.database.converter.backup.Exporter.toBackup();
 
-        DataBase.deleteTable();
+        HomerDataBase.deleteTable();
 
         homer.database.converter.backup.Importer.fromBackup(backup);
 
-        for (String columnName : DataBase.getColumnNames()) {
-            System.out.print(DataBase.getColumnHeader(columnName) + "\t");
+        for (String columnName : HomerDataBase.getColumnNames()) {
+            System.out.print(HomerDataBase.getColumnHeader(columnName) + "\t");
         }
         System.out.println();
-        for (RecordUniqueID lineID : DataBase.getAllRecordIDs()) {
-            for (String columnName : DataBase.getColumnNames()) {
-                System.out.print(DataBase.readValue(columnName, lineID) + "\t");
+        for (RecordUniqueID lineID : HomerDataBase.getAllRecordIDs()) {
+            for (String columnName : HomerDataBase.getColumnNames()) {
+                System.out.print(HomerDataBase.readValue(columnName, lineID) + "\t");
             }
             System.out.println();
         }
