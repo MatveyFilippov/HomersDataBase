@@ -12,7 +12,10 @@ public class DataBaseReader {
 
     public static void throwIfReadingUnavailable() {
         if (!DataBase.isOpen()) {
-            throw new RuntimeException("Can't work with DataBase because nothing is open");
+            throw new RuntimeException("The HomerDataBase can not be accessed because nothing is open");
+        }
+        if (!DataBase.isTableCreated()) {
+            throw new RuntimeException("The HomerDataBase can not be accessed because nothing is created");
         }
     }
 
