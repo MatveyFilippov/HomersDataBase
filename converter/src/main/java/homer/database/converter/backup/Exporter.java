@@ -18,6 +18,7 @@ public class Exporter {
     }
 
     public static File toBackup(File exportFileOrFolder) throws IOException {
+        DataBaseReader.throwIfReadingUnavailable();
         File backupExportFile = getBackupExportFile(exportFileOrFolder);
         ArchiveUtil.zipDirectory(DataBaseReader.getPathToDataBase(), backupExportFile.toPath());
         return backupExportFile;

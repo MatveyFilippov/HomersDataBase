@@ -31,6 +31,7 @@ public class Exporter {
     }
 
     public static File toCSV(File exportFileOrFolder) throws IOException {
+        DataBaseReader.throwIfReadingUnavailable();
         List<String> lines = new ArrayList<>();
         lines.add(String.join(CSV_LINE_SEPARATOR, DataBaseReader.getHeaders()));
         DataBaseReader.getLines().forEach(line -> lines.add(String.join(CSV_LINE_SEPARATOR, line)));

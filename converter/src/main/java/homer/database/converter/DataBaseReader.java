@@ -10,6 +10,12 @@ import java.util.List;
 
 public class DataBaseReader {
 
+    public static void throwIfReadingUnavailable() {
+        if (!DataBase.isOpen()) {
+            throw new RuntimeException("Can't work with DataBase because nothing is open");
+        }
+    }
+
     public static String getDataBaseName() {
         return DataBase.getOpened().getFileName().toString();
     }
