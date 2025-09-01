@@ -1,34 +1,48 @@
 package homer.database.backend;
 
-import homer.database.backend.engine.columns.helpers.RecordUniqueID;
-import homer.database.backend.engine.datatypes.NumberType;
-import homer.database.backend.engine.datatypes.helpers.DataTypes;
-
-import javax.naming.NameNotFoundException;
-import java.io.IOException;
-import java.security.KeyException;
+import homer.database.backend.datatypes.DataType;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 class UsageExample {
-    public static void main(String[] args) throws IOException, NameNotFoundException, KeyException {
-        DataBase.setPathToDataBase("DataBaseExample");
-        DataBase.cleanTable();
 
-        DataBase.createTable("ID", DataTypes.NUMBER);
-        DataBase.createColumn("Name", DataTypes.STRING, false, true);
+    public static void main(String[] args) {
+        DataBase.connect(Paths.get("HomerDataBaseExample/"));
+        DataBase.cleanAll();
 
-        NumberType id1 = new NumberType(1);
-        RecordUniqueID newLineID = DataBase.createNewLine(id1);
-        DataBase.writeValue("Name", newLineID, DataTypes.STRING.parseValue("Homer"));
+        Table tableCreated = DataBase.createTable("Example")
+                                     .withPrimaryColumn("ID", DataType.NUMBER)
+                                     .withColumn("Name", DataType.STRING, false, false)
+                                     .getTable();
 
-        for (String columnName : DataBase.getColumnNames()) {
-            System.out.print(DataBase.getColumnHeader(columnName) + "\t");
+        double id1 = 1;
+        tableCreated.newLine(id1, new Table.Node("Name", "Homer"));
+        if (tableCreated.isPrimaryKeyExists(id1)) {
+            System.out.println("Line with id '" + id1 + "' created!");
+            Table.Node[] line = tableCreated.getLine(id1);
+            System.out.println(Arrays.toString(line));
         }
-        System.out.println();
-        for (RecordUniqueID lineID : DataBase.getAllRecordsIds()) {
-            for (String columnName : DataBase.getColumnNames()) {
-                System.out.print(DataBase.readValue(columnName, lineID) + "\t");
+
+        for (String tableName : DataBase.getAllTableNames()) {
+            System.out.println("\nTable: " + tableName);
+            Table tableExisted = DataBase.getTable(tableName);
+
+            String[] columnNames = tableExisted.getAllColumnNames();
+
+            System.out.print("|\t");
+            for (String columnName : columnNames) {
+                System.out.print(columnName + "\t|\t");
             }
             System.out.println();
+
+            for (Object pk : tableExisted.getAllPrimaryKeys()) {
+                System.out.print("|\t");
+                for (String columnName : columnNames) {
+                    System.out.print(tableExisted.getValue(pk, columnName) + "\t|\t");
+                }
+                System.out.println();
+            }
         }
     }
+
 }
