@@ -1,147 +1,100 @@
 package homer.database.backend;
 
-import homer.database.backend.engine.FileProcessor;
-import homer.database.backend.engine.columns.Column;
-import homer.database.backend.engine.columns.UniqueColumn;
-import homer.database.backend.engine.columns.helpers.RecordUniqueID;
-import homer.database.backend.engine.datatypes.helpers.DataType;
-import homer.database.backend.engine.columns.helpers.ColumnsProcessor;
-import homer.database.backend.engine.datatypes.helpers.DataTypes;
+import homer.database.backend.datacontainers.properties.ColumnProperties;
+import homer.database.backend.datacontainers.properties.TableProperties;
+import homer.database.backend.datatypes.DataType;
+import homer.database.backend.exceptions.TableCreatingException;
+import homer.database.backend.exceptions.TableNotCreatedException;
+import homer.database.backend.utils.file.AbstractPath;
+import java.nio.file.Path;
+import java.util.Objects;
 
-import javax.naming.NameNotFoundException;
-import java.io.IOException;
-import java.security.KeyException;
-import java.util.ArrayList;
-import java.util.List;
+public final class DataBase {
 
-public class DataBase {
+    public static final class TableCreator {
 
-    public static void setPathToDataBase(String ... pathsToTable) {
-        FileProcessor.pathToDataBaseRootDir = FileProcessor.getAbsolute(FileProcessor.join(pathsToTable));
-    }
+        private final String tableName;
 
-    public static void deleteTable() {
-        FileProcessor.deleteDir(FileProcessor.pathToDataBaseRootDir);
-        FileProcessor.pathToDataBaseRootDir = null;
-    }
-
-    public static void cleanTable() {
-        FileProcessor.cleanDir(FileProcessor.join(
-                FileProcessor.pathToDataBaseRootDir, FileProcessor.Constants.HDBC_FOLDER_NAME
-        ));
-        FileProcessor.cleanDir(FileProcessor.join(
-                FileProcessor.pathToDataBaseRootDir, FileProcessor.Constants.HDBT_FOLDER_NAME
-        ));
-    }
-
-    public static void createTable(String primaryColumnName, DataTypes primaryColumnDataType) throws IOException {
-        ColumnsProcessor.createPrimaryColumn(primaryColumnName, primaryColumnDataType);
-    }
-
-    public static void createColumn(String columnName, DataTypes columnDataType, boolean isUnique, boolean isNullPossible) throws IOException {
-        ColumnsProcessor.newColumn(columnName, columnDataType, isUnique, isNullPossible);
-    }
-
-    public static void cleanColumn(String columnName) throws IOException {
-        ColumnsProcessor.cleanColumn(columnName);
-    }
-
-    public static void deleteColumn(String columnName) throws IOException {
-        ColumnsProcessor.deleteColumn(columnName);
-    }
-
-    public static String getPrimaryColumnName() throws IOException, NameNotFoundException, KeyException {
-        UniqueColumn<? extends DataType> column = ColumnsProcessor.getPrimaryColumn();
-        return column.columnName;
-    }
-
-    public static List<String> getColumnNames() throws IOException {
-        List<String> columnNames = new ArrayList<>();
-        for (Column<? extends DataType> column : ColumnsProcessor.getColumns()) {
-            columnNames.add(column.columnName);
-        }
-        return columnNames;
-    }
-
-    private static boolean isPrimaryColumn(String columnName) throws NameNotFoundException, IOException, KeyException {
-        return columnName.equals(getPrimaryColumnName());
-    }
-
-    public static String getColumnHeader(String columnName) throws IOException, NameNotFoundException {
-        Column<? extends DataType> column = ColumnsProcessor.getColumn(columnName);
-        return column.toString();
-    }
-
-    public static DataTypes getColumnDataType(String columnName) throws NameNotFoundException, IOException {
-        Column<? extends DataType> column = ColumnsProcessor.getColumn(columnName);
-        return column.dataType;
-    }
-
-    public static <DT extends DataType> DT tryToParseValue(String columnName, String value) throws NameNotFoundException, IOException {
-        Column<DT> column = ColumnsProcessor.getColumn(columnName);
-        return column.dataType.parseValue(value);
-    }
-
-    public static <DT extends DataType> RecordUniqueID createNewLine(DT primaryKey) throws NameNotFoundException, IOException, KeyException {
-        UniqueColumn<DT> primaryColumn = ColumnsProcessor.getPrimaryColumn();
-        RecordUniqueID key = new RecordUniqueID(primaryKey);
-        primaryColumn.writeValue(key, key.toDataType());
-        return key;
-    }
-
-    public static List<RecordUniqueID> getAllRecordsIds() throws NameNotFoundException, IOException, KeyException {
-        List<RecordUniqueID> values = new ArrayList<>();
-        UniqueColumn<? extends DataType> primaryColumn = ColumnsProcessor.getPrimaryColumn();
-        for (DataType value : primaryColumn.getAllValues()) {
-            values.add(new RecordUniqueID(value));
-        }
-        return values;
-    }
-
-    public static <DT extends DataType> void writeValue(String columnName, RecordUniqueID recordUniqueID, DT value) throws NameNotFoundException, IOException {
-        Column<DT> column = ColumnsProcessor.getColumn(columnName);
-        column.writeValue(recordUniqueID, value);
-    }
-
-    public static <DT extends DataType> DT readValue(String columnName, RecordUniqueID recordUniqueID) throws NameNotFoundException, IOException {
-        Column<DT> column = ColumnsProcessor.getColumn(columnName);
-        return column.readValue(recordUniqueID);
-    }
-
-    public static <DT extends DataType> List<RecordUniqueID> findValues(String columnName, DT value) throws NameNotFoundException, IOException {
-        Column<DT> column = ColumnsProcessor.getColumn(columnName);
-        return column.getRecordsUniqueID(value);
-    }
-
-    private static void deleteValueWithoutCheckingToPrimary(String columnName, RecordUniqueID recordUniqueID) throws NameNotFoundException, IOException {
-        Column<? extends DataType> column = ColumnsProcessor.getColumn(columnName);
-        if (!column.canBeNull) {
-            throw new IOException("You can't delete value in column where values can't be null");
-        }
-        column.deleteValue(recordUniqueID);
-    }
-
-    public static void deleteValue(String columnName, RecordUniqueID recordUniqueID) throws NameNotFoundException, IOException, KeyException {
-        if (isPrimaryColumn(columnName)) {
-            deleteLine(recordUniqueID);
-        } else {
-            deleteValueWithoutCheckingToPrimary(columnName, recordUniqueID);
-        }
-    }
-
-    public static <DT extends DataType> void deleteValues(String columnName, DT value) throws NameNotFoundException, IOException, KeyException {
-        if (isPrimaryColumn(columnName)) {
-            deleteLine(findValues(columnName, value).get(0));
-        } else {
-            for (RecordUniqueID recordUniqueID : findValues(columnName, value)) {
-                deleteValueWithoutCheckingToPrimary(columnName, recordUniqueID);
+        TableCreator(String tableName) {
+            try {
+                TableProperties.create(tableName);
+            } catch (Exception ex) {
+                throw new TableCreatingException(ex, tableName);
             }
+            this.tableName = tableName;
         }
+
+        private void deleteCreatedTableAndTrow(Exception ex) {
+            TableProperties.delete(tableName);
+            throw new TableCreatingException(ex, tableName);
+        }
+
+        public TableCreator withColumn(String columnName, DataType dataType, Boolean isNullable, Boolean isUnique) {
+            try {
+                ColumnProperties.create(tableName, columnName, dataType, isNullable, isUnique);
+            } catch (Exception ex) {
+                deleteCreatedTableAndTrow(ex);
+            }
+            return this;
+        }
+
+        public TableCreator withPrimaryColumn(String primaryColumnName, DataType primaryColumnDataType) {
+            withColumn(primaryColumnName, primaryColumnDataType, false, true);
+            try {
+                TableProperties.setPrimaryColumn(tableName, primaryColumnName);
+            } catch (Exception ex) {
+                deleteCreatedTableAndTrow(ex);
+            }
+            return this;
+        }
+
+        public Table getTable() {
+            try {
+                TableProperties.setFinal(tableName);
+            } catch (Exception ex) {
+                deleteCreatedTableAndTrow(ex);
+            }
+            return new Table(tableName);
+        }
+
     }
 
-    public static void deleteLine(RecordUniqueID recordUniqueID) throws IOException {
-        for (Column<? extends DataType> column : ColumnsProcessor.getColumns()) {
-            column.deleteValue(recordUniqueID);
-        }
+    public static void connect(Path pathToDataBaseDir) {
+        Objects.requireNonNull(pathToDataBaseDir, "Path to DataBase directory can't be null");
+        AbstractPath.setRoot(pathToDataBaseDir);
     }
+
+    public static boolean isConnected() {
+        return AbstractPath.isRootSet();
+    }
+
+    public static void disconnect() {
+        AbstractPath.unsetRoot();
+    }
+
+    public static void cleanAll() {
+        AbstractPath.cleanRoot();
+    }
+
+    public static TableCreator createTable(String tableName) {
+        return new TableCreator(tableName);
+    }
+
+    public static Table getTable(String tableName) {
+        if (!TableProperties.isExists(tableName) || !TableProperties.isFinal(tableName)) {
+            throw new TableNotCreatedException(tableName);
+        }
+        return new Table(tableName);
+    }
+
+    public static void deleteTable(String tableName) {
+        Table table = getTable(tableName);
+        table.cleanByDeleteDir();
+        TableProperties.delete(tableName);
+    }
+
+    public static String[] getAllTableNames() {
+        return TableProperties.getAll();
+    }
+
 }
