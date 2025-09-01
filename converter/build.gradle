@@ -5,12 +5,12 @@ plugins {
 }
 
 group 'homer.database'
-version 'beta-1.2.0'
+version 'beta-2.0.0'
 
 repositories {
     mavenCentral()
     flatDir {
-        dirs 'libs'
+        dirs "${rootDir}/../jar-libs"
     }
     maven {
         url uri("${rootDir}/../local-repo")
@@ -21,8 +21,8 @@ sourceCompatibility = '9'
 targetCompatibility = '9'
 
 dependencies {
-    // implementation name: 'HomerDataBase-1.0.0-backend'
-    implementation 'homer.database:backend:beta-1.2.0'
+    // implementation name: 'HomerDataBase-2.0.0-backend'
+    implementation 'homer.database:backend:beta-2.0.0'
 }
 
 shadowJar {
@@ -35,8 +35,8 @@ shadowJar {
         )
     }
     dependencies {
-        exclude(dependency(':HomerDataBase-1.0.0-backend'))
-        exclude(dependency('homer.database:backend:beta-1.2.0'))
+//        exclude(dependency(':HomerDataBase-2.0.0-backend'))
+        exclude(dependency('homer.database:backend:beta-2.0.0'))
     }
 }
 

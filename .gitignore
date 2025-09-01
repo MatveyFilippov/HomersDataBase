@@ -40,6 +40,5 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-/converter/libs/
-/GUI/libs/
+/jar-libs/
 /local-repo/

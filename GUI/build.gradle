@@ -1,11 +1,8 @@
-import io.github.fvarrui.javapackager.gradle.PackageTask
-
 plugins {
     id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'org.beryx.jlink' version '3.1.1'
-    id 'io.github.fvarrui.javapackager.plugin' version '1.7.6'
 }
 
 group 'homer.database'
@@ -13,8 +10,13 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    if (javafx.platform.classifier == "linux-aarch64") {
+        maven {
+            url "https://nexus.gluonhq.com/nexus/content/repositories/releases/"  // only for javaFX -v21.0.1
+        }
+    }
     flatDir {
-        dirs 'libs'
+        dirs "${rootDir}/../jar-libs"
     }
     maven {
         url uri("${rootDir}/../local-repo")
@@ -31,7 +33,6 @@ plugins.withType(JavaPlugin) {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
-    // options.compilerArgs += ['--module-path', classpath.asPath]
     sourceCompatibility = '9'
     targetCompatibility = '9'
 }
@@ -42,19 +43,20 @@ application {
 }
 
 javafx {
-    version = '22.0.1'
+    version = '21.0.1'
     modules = ['javafx.controls', 'javafx.fxml']
 }
 
 dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.36'
     implementation 'org.slf4j:slf4j-jdk14:1.7.36'
+
     runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:$javafx.platform.classifier"
 
-//    implementation name: 'HomerDataBase-1.0.0-backend'
-//    implementation name: 'HomerDataBase-1.0.0-converter'
-    implementation 'homer.database:backend:beta-1.2.0'
-    implementation 'homer.database:converter:beta-1.2.0'
+//    implementation name: 'HomerDataBase-2.0.0-backend'
+//    implementation name: 'HomerDataBase-2.0.0-converter'
+    implementation 'homer.database:backend:beta-2.0.0'
+    implementation 'homer.database:converter:beta-2.0.0'
 }
 
 jlink {
@@ -78,30 +80,4 @@ jlink {
 
 jlinkZip {
     group = 'distribution'
-}
-
-task packageToApp(type: PackageTask, dependsOn: build) {
-    mainClass = application.mainClass
-
-    outputDirectory = file("${buildDir}/distributions")
-    setAppName("HomerDataBase")
-    displayName = "HomerDataBase"
-    organizationName = "Homer"
-    jreMinVersion = targetCompatibility
-//    administratorRequired = true
-//    fileAssociations =
-//    additionalResources = [ file('file path'), file('folder path'), ... ]
-//    platform = "auto"|"linux"|"mac"|"windows"  // Default is "auto"
-
-//    linuxConfig {
-//        ...
-//    }
-    macConfig {
-        icnsFile = file("${rootDir}/src/main/resources/homer/database/gui/AppIcon/HomerDataBaseIcon.icns")
-    }
-    winConfig {
-        icoFile = file("${rootDir}/src/main/resources/homer/database/gui/AppIcon/HomerDataBaseIcon.ico")
-        disableRunAfterInstall = false
-        removeOldLibs = true
-    }
 }
