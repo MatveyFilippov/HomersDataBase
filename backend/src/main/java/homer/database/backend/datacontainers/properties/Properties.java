@@ -11,25 +11,32 @@ import java.util.Set;
 class Properties<V> {
 
     public static final Properties<Set<String>> TABLES = new Properties<>(
-            "tables", DataType.STRING.getCollectionSerializer(HashSet::new)
+            "tables",
+            DataType.STRING.getCollectionSerializer(HashSet::new)
     );
     public static final Properties<Set<String>> COLUMNS = new Properties<>(
-            "%s.columns", DataType.STRING.getCollectionSerializer(HashSet::new)
+            "%s.columns",
+            DataType.STRING.getCollectionSerializer(HashSet::new)
     );
     public static final Properties<String> TABLE_PRIMARY_COLUMN = new Properties<>(
-            "%s.primary_column", (DataSerializer<String>) DataType.STRING.getSerializer()
+            "%s.primary_column",
+            (DataSerializer<String>) DataType.STRING.getSerializer()
     );
     public static final Properties<String> COLUMN_DATA_TYPE = new Properties<>(
-            "%s.%s.data_type", (DataSerializer<String>) DataType.STRING.getSerializer()
+            "%s.%s.data_type",
+            (DataSerializer<String>) DataType.STRING.getSerializer()
     );
     public static final Properties<Boolean> COLUMN_IS_NULLABLE = new Properties<>(
-            "%s.%s.is_nullable", (DataSerializer<Boolean>) DataType.BOOL.getSerializer()
+            "%s.%s.is_nullable",
+            (DataSerializer<Boolean>) DataType.BOOL.getSerializer()
     );
     public static final Properties<Boolean> COLUMN_IS_UNIQUE = new Properties<>(
-            "%s.%s.is_unique", (DataSerializer<Boolean>) DataType.BOOL.getSerializer()
+            "%s.%s.is_unique",
+            (DataSerializer<Boolean>) DataType.BOOL.getSerializer()
     );
     public static final Properties<Boolean> TABLE_IS_FINAL = new Properties<>(
-            "%s.is_final", (DataSerializer<Boolean>) DataType.BOOL.getSerializer()
+            "%s.is_final",
+            (DataSerializer<Boolean>) DataType.BOOL.getSerializer()
     );
 
     private static final BytesDictionaryFile GLOBAL = new BytesDictionaryFile(new AbstractPath("Properties"));

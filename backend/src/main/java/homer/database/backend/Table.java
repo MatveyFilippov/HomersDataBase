@@ -131,7 +131,7 @@ public final class Table {
     public String[] getAllColumnNames() {
         return ColumnProperties.getAll(tableName);
     }
-    
+
     public String getPrimaryColumnName() {
         return TableProperties.getPrimaryColumn(tableName);
     }
@@ -194,7 +194,7 @@ public final class Table {
 
     public void editLine(final Object primaryKey, Node... data) {
         checkPrimaryKeyElseThrow(primaryKey, true);
-        checkNodesElseThrow(data, getAllColumnNamesWithoutPrimary(),true, false);
+        checkNodesElseThrow(data, getAllColumnNamesWithoutPrimary(), true, false);
 
         Arrays.stream(data)
               .forEach(node -> getColumn(node.column).writeValue(primaryKey, node.value));
@@ -216,7 +216,7 @@ public final class Table {
     }
 
     public Object[] findPrimaryKeysWhere(Node data) {
-        checkNodesElseThrow(new Node[] {data}, getAllColumnNamesWithoutPrimary(),false, false);
+        checkNodesElseThrow(new Node[] {data}, getAllColumnNamesWithoutPrimary(), false, false);
 
         return getColumn(data.column).readPrimaryKeys(data.value);
     }

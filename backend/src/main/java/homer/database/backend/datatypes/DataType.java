@@ -10,10 +10,10 @@ import java.util.function.Function;
 
 public enum DataType {
 
-    BOOL (Boolean.class, new BoolSerializer()),
-    NUMBER (Double.class, new NumberSerializer()),
-    STRING (String.class, new StringSerializer()),
-    TIME (OffsetDateTime.class, new DateTimeSerializer());
+    BOOL(Boolean.class, new BoolSerializer()),
+    NUMBER(Double.class, new NumberSerializer()),
+    STRING(String.class, new StringSerializer()),
+    TIME(OffsetDateTime.class, new DateTimeSerializer());
 
     private final Class<?> serializable;
     private final DataSerializer<?> serializer;

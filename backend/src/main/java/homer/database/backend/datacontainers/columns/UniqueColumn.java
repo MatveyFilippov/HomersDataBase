@@ -71,7 +71,7 @@ public class UniqueColumn<PK, V> extends Column<PK, V> {
 
         byte[] pkByte = pkSerializer.serialize(pk);
 
-        values.get(pkByte).ifPresent(valueByte ->  {
+        values.get(pkByte).ifPresent(valueByte -> {
             values.remove(pkByte);
             keys.remove(valueByte);
         });
@@ -82,4 +82,5 @@ public class UniqueColumn<PK, V> extends Column<PK, V> {
         keys.clean();
         super.cleanColumn();
     }
+
 }

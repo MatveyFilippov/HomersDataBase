@@ -3,7 +3,6 @@ package homer.database.backend.utils.storage;
 import homer.database.backend.exceptions.BytesDictionaryFileOperationException;
 import homer.database.backend.utils.file.AbstractPath;
 import com.google.common.hash.Hashing;
-import java.lang.Exception;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;

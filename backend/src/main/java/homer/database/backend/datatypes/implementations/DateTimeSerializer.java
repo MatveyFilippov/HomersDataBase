@@ -8,8 +8,8 @@ import java.time.format.DateTimeParseException;
 
 public class DateTimeSerializer extends DataSerializer<OffsetDateTime> {
 
-    private static final DataSerializer<String> stringSerializer = new StringSerializer();
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
+    private static final DataSerializer<String> stringSerializer = new StringSerializer();
 
     @Override
     protected byte[] doSerialize(OffsetDateTime data) {

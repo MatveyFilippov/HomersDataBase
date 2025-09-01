@@ -13,6 +13,17 @@ class Bucket {
     private final byte[] key;
     private final byte[] value;
 
+    static byte[] intToBytes(int value) {
+        return new byte[] {(byte) (value >>> 24), (byte) (value >>> 16), (byte) (value >>> 8), (byte) value};
+    }
+
+    static int bytesToInt(byte[] bytes, int offset) {
+        return (
+                ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) |
+                ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF)
+        );
+    }
+
     public Bucket(byte[] key, byte[] value) {
         Objects.requireNonNull(key, "Key cannot be null");
         Objects.requireNonNull(value, "Value cannot be null");
@@ -66,24 +77,6 @@ class Bucket {
         byte[] value = Arrays.copyOfRange(bytesKeyValueWithSep, HEADER_SIZE + keyLen, HEADER_SIZE + keyLen + valLen);
 
         return new Bucket(key, value);
-    }
-
-    static byte[] intToBytes(int value) {
-        return new byte[] {
-                (byte) (value >>> 24),
-                (byte) (value >>> 16),
-                (byte) (value >>> 8),
-                (byte) value
-        };
-    }
-
-    static int bytesToInt(byte[] bytes, int offset) {
-        return (
-                ((bytes[offset] & 0xFF) << 24) |
-                ((bytes[offset + 1] & 0xFF) << 16) |
-                ((bytes[offset + 2] & 0xFF) << 8) |
-                (bytes[offset + 3] & 0xFF)
-        );
     }
 
 }

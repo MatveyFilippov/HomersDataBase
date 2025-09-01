@@ -34,7 +34,9 @@ public class Column<PK, V> {
         Objects.requireNonNull(pk, "PrimaryKey can't be null");
 
         byte[] pkByte = pkSerializer.serialize(pk);
-        byte[] valueByte = values.get(pkByte).orElseThrow(() -> new DataInColumnExistenceException("Value doesn't exists"));
+        byte[] valueByte = values.get(pkByte).orElseThrow(
+                () -> new DataInColumnExistenceException("Value doesn't exists")
+        );
 
         return valueSerializer.deserialize(valueByte);
     }

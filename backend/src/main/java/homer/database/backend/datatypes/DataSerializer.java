@@ -5,6 +5,7 @@ import homer.database.backend.exceptions.SerializingException;
 public abstract class DataSerializer<T> {
 
     protected abstract byte[] doSerialize(T data) throws SerializingException;
+
     protected abstract T doDeserialize(byte[] data) throws SerializingException;
 
     public final byte[] serialize(T data) {
